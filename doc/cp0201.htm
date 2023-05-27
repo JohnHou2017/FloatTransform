@@ -1,0 +1,282 @@
+<html><head><!-- Copyright (c) 2005 John J. G. Savard --><title>Floating-Point Formats</title></head>
+<body>
+[<a href="http://www.quadibloc.com/comp/cp0202.htm">Next</a>]
+[<a href="http://www.quadibloc.com/comp/cp02.htm">Up/Previous</a>]
+<hr>
+<h1>Floating-Point Formats</h1>
+<p>The examples of floating-point numbers shown on the previous page
+illustrated the most common general type of floating-point format,
+the one shown in the first line of the diagram below:</p>
+<p><img src="cp0201_files/floats.gif" height="180" width="400"></p>
+<p>The format shown in the first line begins with a single sign bit,
+which is 0 if the number is positive, and 1 if the number is negative.
+Next is the exponent. If the exponent is eight bits long, as shown in
+the diagram, it is in
+excess-128 notation, so that the smallest exponent value, 00000000,
+stands for -128, and the largest exponent value, 11111111, stands for
+127. Finally, we find the mantissa, which is an unsigned binary
+fraction.</p>
+<p>If the mantissa is normalized, non-negative floating-point numbers
+can be compared by the same instructions as are used to compare
+integers.</p>
+<p>This format is particularly popular on computers that have hardware
+support for floating-point numbers. A number of variations on this format
+are used.</p>
+<p>Of course, the length of the exponent field shown in the diagram is
+only one possibility.</p> 
+<p>The diagram below shows several examples of floating-point formats
+of this type, but they are only a very small sampling of the number
+of formats of this type that have been used.</p>
+<p><img src="cp0201_files/floats2.gif" height="1240" width="640"></p>
+<p>The IBM System/360 computer used an exponent that was seven bits long,
+in excess-64 notation, that represented a power of 16 instead of a power
+of two. Thus, a mantissa was normalized when any of the first four bits of
+the mantissa was not zero. In addition to the computers that were built
+to be compatible with the System/360 (including the RCA Spectra/70, which
+was compatible only for user programs), many other computers followed the
+same floating point format as the System/360, such as the Texas Instruments 990/12
+and the SEL 32.</p>
+<p>The PDP-10 (and its compatible relatives, the PDP-6 and the DECSYSTEM-20)
+and the Xerox Sigma computers (which, like the System/360, also used a
+hexadecimal exponent), which both used two's complement notation for integers,
+performed a two's complement on the combined exponent and mantissa fields of
+a floating-point number when it was negative. This meant that all normalized
+floating-point numbers, whether they were positive or negative,
+could be compared by integer compare instructions, producing correct
+results.</p>
+<p>The Control Data 1604 computer used
+an exponent field that was 11 bits long; also,
+it used one's complement notation for integers, and the mantissa (called the
+<em>coefficient</em> in that computer's manuals) of floating-point numbers
+was also complemented for negative numbers. This same representation of
+negative numbers was used on the Control Data 6600, but for a 60-bit
+floating-point number, again with an 11-bit exponent.</p>
+<p>The diagram depicts the exponent as being in excess-1024 notation; actually,
+that is not quite accurate. Because of its use of one's complement notation for
+integers, to use the same type of circuitry for arithmetic on exponents,
+zero and positive exponents were represented in excess-1024 notation, but negative
+exponents were represented in excess-1023 notation. Thus, on the Control Data 1604,
+the exponent value of octal 1777 was not used. On the Control Data 6600,
+the exponent value of 3777 octal represented an overflow, the exponent value of 0000
+octal represented an underflow, and the exponent value of 1777 octal represented an
+indeterminate quantity.</p>
+<p>The Cray-1, on the other hand, had a sign bit, 15 bits of excess-16,384
+exponent, and 48 bits of mantissa using the more common sign-magnitude format
+for floating-point numbers.</p>
+<p>Other computers, such as the PDP-11, and its successor, the VAX, dealt
+with the wastefulness of
+having the first bit of the mantissa (almost) always one by omitting that
+bit from the representation of a number. The number zero
+was still represented by a zero mantissa combined with the lowest possible
+exponent value; thus, this exponent value had to be given the additional
+meaning that the hidden one bit was not present. The diagram above shows only
+one of the formats used with the PDP-11, although in single precision it was
+called the F format, and in double precision, the D format, on the VAX and on
+the Alpha; other formats were used,
+including the G format, which had an exponent field that was 11 bits in length,
+used in a 64-bit floating-point number, and which
+led to the expanded range format for the PDP-10 which is shown above,
+and the H format, which had an exponent field 15 bits in length, and which
+was used in a 128-bit floating-point number. Of course, the Alpha now also supports
+the standard IEEE-754 floating-point format, which is described
+<a href="http://www.quadibloc.com/arch/ar0505.htm">here</a> as the "Standard" floating-point format.
+As well, the earliest software
+floating-point provided for the first PDP-11 belonged instead to Group II, and
+involved a 16-bit two's complement exponent followed by a 32-bit two's
+complement mantissa.</p>
+<p>The current standard floating-point representation used in today's
+microcomputers, as specified by the IEEE 754 standard,
+is based on that of the PDP-11, but in addition also allows
+gradual underflow as well. This is achieved by making the lowest possible
+exponent value special in two ways: it indicates no hidden one bit is present,
+and in addition the value represented by the floating-point number is formed
+by multiplying the mantissa by the power of two that the next lower exponent
+value also indicates. It is therefore considerably more complicated
+than the way in which floating-point numbers were typically represented
+on older computers.</p>
+<p>In the IBM 7030 or STRETCH computer, an exponent flag bit was followed
+by a ten bit exponent, the exponent sign, a 48-bit mantissa, the mantissa
+sign, and three flag bits. The exponent flag was used to indicate that
+an overflow or underflow had occurred; the other flag bits could simply be
+set by the programmer to label numbers. The AN/FSQ-31 and 32, with a 48-bit
+word, used 11 bits for the exponent and 37 bits for the mantissa.</p>
+<p>The Burroughs 5500, 6700, and related computers used an exponent which was
+a power of eight. The internal format of a single-precision floating-point
+number consisted of one unused bit, followed by the sign of the number,
+then the sign of the exponent, then a six-bit exponent, then 39-bit mantissa.
+The bias of the exponent was such that it could be considered to be in excess-32
+notation as long as the mantissa was considered to be a binary integer instead of
+a binary fraction. This allowed integers to also be interpreted as unnormalized
+floating-point numbers.</p>
+<p>A double-precision floating-point number had a somewhat complicated format.
+The first word had the same format as a single-precision floating-point number;
+the second word consisted of nine additional exponent bits, followed by 39
+additional mantissa bits; in both cases, these were appended to the bits in the
+first word as being the most significant bits of the number.</p>
+<p>It may also be noted that the MANIAC II computer used a floating-point format
+where the exponent was a power of 65,536. This reduced the number of shifts required,
+which was very important on a very early vacuum-tube computer, although the
+maximum possible loss of precision was rather drastic on a machine with a 48-bit
+word length. But the machine performed floating-point arithmetic only, and it used
+only a four-bit field for the exponent and its sign; thus, the intent behind its
+floating-point format can be considered to be one of using a format that is halfway
+between conventional floating-point format and integer format, so as to obtain the
+extended range of the former with the speed of the latter.</p>
+<p>The BRLESC computer, with a 69-bit word length, used a base-16
+exponent, thus remaining within the bounds of convention.</p>
+<p>The second line in the diagram illustrates the kind of floating-point format
+used on computers such as the PDP-8 and the RECOMP II. Here, a floating-point
+number is simply represented by two signed binary numbers, the first, being the
+exponent, treated as an integer, and the second, being the mantissa, treated as a
+fraction, both represented in the ordinary format for signed fixed-point numbers
+used on the computer.</p>
+<p>Some of the formats of this type are illustrated below:</p>
+<p><img src="cp0201_files/floats3.gif" height="400" width="680"></p>
+<p>The floating-point hardware optionally available for the PDP-8, called the
+Floating Point Processor-12, as it was originally introduced as an option for the PDP-12
+(an updated version of the LINC-8), and a set of floating-point routines for the PDP-8
+available as a separate product, both used a
+single 12-bit word for the exponent, and multiple 12-bit words to represent the mantissa.
+Other floating-point representations also were used in software on the PDP-8, however;
+for example, 8K FORTRAN used a format which began with one bit for the sign of the
+number, followed by an eight-bit signed exponent, with the first three bits of the
+mantissa completing the first word; this format belonged to the class illustrated by
+the first line of the diagram above, and was used in order to provide compatibility with
+the PDP-10 and/or the IBM 7090. However, 4K FORTRAN for the PDP-8 used the same floating-point
+format as the Floating Point Processor and the Floating Point Package.
+Double-precision floating-point numbers on the PDP-4, 7, 9
+and 15 were represented by one 18-bit word for the exponent, and two 18-bit words
+containing the mantissa; the format of single-precision floating-point numbers on those
+machines was more complicated. The RECOMP II, a drum-based computer with a 40-bit
+word length, simply used one 40-bit word for the exponent, and one 40-bit word
+for the mantissa. (Incidentally, it used sign-magnitude notation for numbers,
+not two's complement.) While this was obviously done merely to simplify the design
+of the computer, advertisements (appearing, for example, in <em>Scientific American</em>
+during the late 1950s) extolled the ability of this computer to handle
+numbers which, if written down, would girdle the entire globe.</p>
+<p>This diagram does not show all the formats of this type that were in use; the
+Paper Tape Software Package for the PDP-11 included a Math Package with floating-point
+routines that worked on a format consisting of a 16-bit two's complement exponent
+followed by a 32-bit two's complement mantissa.</p>
+<p>Also, the Manchester ATLAS computer, notable for introducing virtual memory,
+used an 8-bit sign-magnitude exponent followed by a 40-bit sign-magnitude
+mantissa. The exponent was a power of eight. A power-of-eight exponent was also
+used on the Burroughs 5500; thus, a claim I once read that a power-of-eight exponent
+did not, in practice, lead to the type of problems encountered with the power-of-sixteen
+exponent on the IBM System/360 could have had practical experience behind it.</p>
+<p>The third line of the diagram illustrates a kind of format which, with a number of
+variations, was found on most computers with a 24-bit word length. Computers with a 48-bit
+word length, on the other hand, typically had hardware floating-point, and used a floating-point
+format of the type given in the first line.</p>
+<p>Why did these computers use such an unusual floating-point format?</p>
+<p>Typically, although these computers did not have hardware floating-point support, the way
+bigger computers with a 32-bit, 36-bit, 48-bit, or 64-bit word length did, they did come standard
+with hardware integer multiplication, unlike smaller computers with an 18-bit, 16-bit, or 12-bit
+word length.</p>
+<p>In order to support floating-point arithmetic, the format of double-precision fixed-point
+numbers on most of these computers omitted the first bit of the second word of the number
+from the number itself, sometimes treating it as a second copy of the sign, so that fixed-point
+numbers could be treated as having the binary point on the right, making them integers, or on
+the left, after the sign, making them fractions on the interval [0,1), without having to adjust
+them by shifting them one place to the left after a multiplication.</p>
+<p>The floating-point formats of many 24-bit computers followed this general model, but
+they varied in minor ways from it, and are illustrated below.</p>
+<p><img src="cp0201_files/floats4.gif" height="528" width="824"></p>
+<p>The Datacraft 6024 computer, and its successors from Harris, used two's complement
+form to represent integers. The exponent field, including sign, was eight bits long.
+The basic format shown above was used for double-precision floating-point; in single-precision
+floating point, numbers still occupied two 24-bit words in memory, but the portion of the
+mantissa in the second word was not used.</p>
+<p>The DDP-24 computer, from 3C and then Honeywell, used sign-magnitude representation
+for integers, and a multiply instruction ensured both words of the product contained the
+same sign. It also left the mantissa portion of the second word unused for single-precision
+numbers. The eight least significant bits of the second word contained the value of the
+exponent; the sign of the exponent was contained in the sign bit of the second word,
+instead of that bit being unused.</p>
+<p>The ICL 1900 computer used two's complement notation for integers. In double-length
+fixed-point numbers, the first bit of the second word was always zero. The exponent field
+of a floating-point number consisted of nine bits in excess-256
+notation; the first bit of the second word was a flag which, if one, indicated that a
+floating-point overflow had taken place. Single-precision numbers were 48 bits long. A
+double-precision number was 96 bits long; in the second half of the number, which contained
+the least significant 35 bits of the mantissa, the first bit of each word, and the area
+corresponding to the exponent field in the first half, were ignored.</p>
+<p>The SDS 930, 940, and 9300 computers used two's complement representation
+for integers. When they performed a fixed-point multiply, the product was a
+48-bit fraction; the most significant bit of the second word was not skipped. The SDS 9300
+had a hardware floating-point unit, and, thus, its manual described a hardware
+floating-point format consisting of a 39-bit two's complement mantissa followed by a 9-bit
+two's complement exponent. Therefore, although the floating-point format did belong to this
+general class, by virtue of having the exponent at the end rather than the beginning, it did
+not include a skipped bit in floating-point numbers. This is also the
+floating-point format supported by software for the 930 and 940 as well, as noted
+in Bell and Newell.</p>
+<p>The Scientific Control Corporation 660 computer used two's complement notation
+for integers, and also produced a 48-bit fraction when it multiplied two 24-bit fixed-point
+numbers, and its floating-point format also consisted of a 39-bit two's complement mantissa
+followed by a 9-bit two's complement exponent.</p>
+<p>The ASI 6020 computer used a 39-bit mantissa in sign-magnitude format, followed by
+a nine-bit exponent in excess-256 notation, a rare instance of excess-n format being used
+in a Group III representation of floating-point numbers.</p>
+<p>Another floating-point format that belongs to this class was used with the Hewlett-Packard
+2114/5/6 computers, although these computers had a 16 bit word. A floating-point number
+began with a two's complement mantissa, and then ended with seven bits of exponent,
+<em>followed</em> by the sign of the exponent, neither of which was complemented when the
+number was negative. Floating-point numbers could occupy either two or three 16-bit words,
+depending on whether they were single or double precision.</p>
+<p>On the other hand, the Foxboro FOX-1 computer with a 24-bit word length used a floating-point
+format belonging to Group I; single-precision floating-point numbers occupied only 24 bits,
+and consisted of the sign followed by a six-bit excess-32 exponent and 17 bits of mantissa.
+A negative number was the two's complement of the corresponding positive number, as with the
+PDP-10 and the Sigma. Double-precision floating-point numbers occupied 48 bits, and
+consisted of the sign followed by a twelve-bit excess-2,048 exponent and 35 bits of
+mantissa. Also, the CDC 924 computer, which also did not have hardware floating-point
+support, when it multiplied two 24-bit integers, it produced a conventional 48-bit integer
+result with no omitted bits. It used one's complement notation for 24-bit integers,
+but 15-bit values used in the index registers were in two's complement form. It is likely,
+therefore, that its sofware floating-point format was compatible with the conventional
+floating-point format used by the CDC 1604. Also, the Packard-Bell 440 computer had
+built-in operations that dealt with the second through ninth bits (from the left) of a 24-bit
+word as their exponent part, and thus it was optimized for a Group I floating-point format.</p>
+<p>Several of the additional floating-point formats not illustrated above are shown below:</p>
+<p><img src="cp0201_files/floats6.gif" height="800" width="620"></p>
+<p>Note also that the three lines in the first diagram which illustrated the
+three possible general types of format, as well as the illustrations of
+floating-point formats in the other diagrams, assume that the component parts of
+the floating-point number, whether they are 24-bit words or 8-bit bytes, are lined up so
+as to be in the normal left to right direction from most significant to least significant
+for representing integers. Thus, on a <em>little-endian</em> machine, the component of the
+number on the left would be at a location with a higher address instead of a lower one.
+Note, however, that on at least some machines, while integers were represented in little-endian
+form, floating-point numbers were represented in big-endian form.</p>
+<p>On the PDP-11, a particularly unfortunate variation of this took place.
+As it was the first computer to attempt to achieve the consistent use of a little-endian
+representation for data (previous computers were always big-endian when packing characters
+into words, but sometimes were little-endian when using two words to represent a long integer)
+this novel concept was doubtless unfamiliar to the engineers designing the FP-11,
+the initial hardware floating-point unit designed for this architecture.</p>
+<p>The PDP-11 had a 16-bit word, but could also address and manipulate 8-bit bytes directly.
+As with many other computers, such as the Honeywell 316, a 32-bit integer was stored with its
+least significant 16-bit word first, in the lower memory address, so that addition could begin
+while the more significant words of the operands were being fetched. For consistency, the
+PDP-11 was designed so that the least significant 8 bits of a 16-bit word had the lower byte
+address, and the more significant 8 bits of a 16-bit word had the higher byte address.</p>
+<p>Because the FP-11 was designed as though the PDP-11 were a big-endian computer instead of
+a little-endian computer, it placed the most significant parts of the values on which it
+acted in the lower memory address. In addition to floating-point numbers, this included
+32-bit integers as well, but as the PDP-11 already posessed instructions to assist in handling
+32-bit integers in little-endian format, this flaw was corrected in subsequent extensions to
+the PDP-11 architecture.</p>
+<p>The floating-point format, however, remained fixed. The byte addressing within a word
+was a property of the base PDP-11 architecture, and was not altered by the design of the
+FP-11 as though it were for a big-endian machine. Hence, in the illustrations of the floating-point
+format for the PDP-11 shown above, the successive bytes in a floating-point number have
+addresses in the order:</p>
+<pre> 1  0  3  2  5  4  7  6
+</pre>
+<p>This aspect of the PDP-11 floating-point format was preserved, at least for the F and D
+formats, even on the VAX computer, because it included a PDP-11 compatibility mode.</p>
+<hr>
+[<a href="http://www.quadibloc.com/comp/cp0202.htm">Next</a>]
+[<a href="http://www.quadibloc.com/comp/cp02.htm">Up/Previous</a>]
+</body></html>

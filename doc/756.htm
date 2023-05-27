@@ -1,0 +1,163 @@
+<html><head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8"><title>IEEE binary float to string conversion</title>
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expire" content="Mon, 04 Dec 1999 21:29:02 GMT">
+<link rel="stylesheet" href="756_files/wikit-css.css" type="text/css">
+<!-- base href="http://wiki.tcl.tk/" --></head>
+<body bgcolor="#ffffff">
+<h2><a href="http://wiki.tcl.tk/references/756%21">IEEE binary float to string conversion</a></h2><p></p><p><i>From a post in <a rel="nofollow" href="news:comp.lang.tcl">news:comp.lang.tcl</a> :</i></p><p><a href="http://wiki.tcl.tk/3077">FPX</a>:
+Floating point values are usually transferred in IEEE format. IEEE
+754-1985, "IEEE Standard for Binary Floating-Point Arithmetic" [<a rel="nofollow" href="http://standards.ieee.org/reading/ieee/std_public/description/busarch/754-1985_desc.html">1</a>] defines 32-bit and 64-bit encoding formats for floating-point numbers.</p><p>Normally, such values can be interpreted using Tcl's <a href="http://wiki.tcl.tk/1181">binary</a>
+command, using the "f" and "d" formats. However, there is a catch: Tcl
+ultimately depends on the encoding of the "float" and "double" data
+types in the C language, and according to ISO C, the encoding of these
+data types is implementation dependent.</p><p>Consequently, the manual for <a href="http://wiki.tcl.tk/1181">binary</a> warns that input and output of the "f" and "d" formats is not portable.</p><p>I
+have written the following code to read an IEEE float value, in case
+that your machine doesn't use IEEE natively. It also supports a
+"byteorder" flag that allows to read the value whether in big-endian or
+little-endian byteorder.</p><p><a href="http://wiki.tcl.tk/9343">PWQ</a> <i>20 Jul 05</i>,
+By definition an IEEE float is always represented one way. IMNHO you
+should call these IEEE-2-native based on byte order of host.</p><pre> proc IEEE2float {data byteorder} {
+    if {$byteorder == 0} {
+        set code [binary scan $data cccc se1 e2f1 f2 f3]
+    } else {
+        set code [binary scan $data cccc f3 f2 e2f1 se1]
+    }
+
+    set se1  [expr {($se1 + 0x100) % 0x100}]
+    set e2f1 [expr {($e2f1 + 0x100) % 0x100}]
+    set f2   [expr {($f2 + 0x100) % 0x100}]
+    set f3   [expr {($f3 + 0x100) % 0x100}]
+
+    set sign [expr {$se1 &gt;&gt; 7}]
+    set exponent [expr {(($se1 &amp; 0x7f) &lt;&lt; 1 | ($e2f1 &gt;&gt; 7))}]
+    set f1 [expr {$e2f1 &amp; 0x7f}]
+
+    set fraction [expr {double($f1)*0.0078125 + \
+            double($f2)*3.0517578125e-05 + \
+            double($f3)*1.19209289550781e-07}]
+
+    set res [expr {($sign ? -1. : 1.) * \
+            pow(2.,double($exponent-127)) * \
+            (1. + $fraction)}]
+    return $res
+ }</pre><p>It
+expects a binary buffer containing an IEEE number and the byte order
+the number is in (0 for big-endian and 1 for little-endian).</p><p>3fa22435 yields 1.2667299509 (big-endian) or 6.1330860035e-07 (little).</p><p>Here's code for the reverse transformation, from a floating-point value to IEEE format:</p><pre> proc float2IEEE {val byteorder} {
+    if {$val &gt; 0} {
+	set sign 0
+    } else {
+	set sign 1
+	set val [expr {-1. * $val}]
+    }
+
+    #
+    # If the following math fails, then it's because of the
+    # logarithm. That means that val is indistinguishable from
+    # zero
+    #
+
+    if {[catch {
+	set exponent [expr {int(floor(log($val)/0.69314718055994529))+127}]
+	set fraction [expr {($val/pow(2.,double($exponent-127)))-1.}]
+    }]} {
+	set exponent 0
+	set fraction 0.0
+    } else {
+	#
+	# round off too-small values to zero, throw error for
+	# too-large values
+	#
+
+	if {$exponent &lt; 0} {
+	    set exponent 0
+	    set fraction 0.0
+	} elseif {$exponent &gt; 255} {
+	    error "value $val outside legal range for a float"
+	}
+    }
+
+    set fraction [expr {$fraction * 128.}]
+    set f1f      [expr {floor($fraction)}]
+    set fraction [expr {($fraction - $f1f) * 256.}]
+    set f2f      [expr {floor($fraction)}]
+    set fraction [expr {($fraction - $f2f) * 256.}]
+    set f3f      [expr {floor($fraction)}]
+
+    set f1       [expr {int($f1f)}]
+    set f2       [expr {int($f2f)}]
+    set f3       [expr {int($f3f)}]
+
+    set se1      [expr {($sign ? 128 : 0) | ($exponent &gt;&gt; 1)}]
+    set e2f1     [expr {(($exponent &amp; 0x1) &lt;&lt; 7) | $f1}]
+
+    if {$byteorder == 0} {
+	set bytes [binary format cccc $se1 $e2f1 $f2 $f3]
+    } else {
+	set bytes [binary format cccc $f3 $f2 $e2f1 $se1]
+    }
+
+    return $bytes
+ }</pre><hr size="1"><p>Also see <a href="http://wiki.tcl.tk/2394">1750A to Float Conversion</a> for converting to and from a MIL-STD-1750A 32-bit floating number.</p><p><a href="http://wiki.tcl.tk/1837">Michael Jacobson</a> ~ jakeforce@home.com</p><hr size="1"><p><a href="http://wiki.tcl.tk/1597">CL</a> intends to make time to demonstrate how the constants above introduce small imprecisions around the twelfth decimal place.</p><hr size="1"><p><a href="http://wiki.tcl.tk/12122">Category Binary Data</a></p><p><a href="http://wiki.tcl.tk/edit/14495@">[</a>PC<a href="http://wiki.tcl.tk/edit/14495@">]</a> For those that want 64 bit double precision IEEE numbers use the following procedure:</p><pre> proc double2IEEE { value } {
+	# covert value to double precision IEEE754 number
+	if {$value &gt; 0} {
+		set sign 0
+	} else {
+		set sign 1
+		set value [expr {-1. * $value}]
+	}
+
+	# If the following math fails, then it's because of the logarithm.
+	# That means that value is indistinguishable from zero
+	if {[catch {
+		set exponent [expr {int(floor(log($value)/0.69314718055994529))+1023}]
+		set fraction [expr {($value/pow(2.,double($exponent-1023)))-1.}]
+	}]} {
+		set exponent 0
+		set fraction 0.0
+	} else {
+		# round off too-small values to zero, throw error for too-large values
+		if {$exponent &lt; 0} {
+			set exponent 0
+			set fraction 0.0
+		} elseif {$exponent &gt; 2047} {
+			error "value $value outside legal range for a float"
+		}
+	}
+
+	set fraction [expr {$fraction * 16.}]
+	set f1f      [expr {floor($fraction)}]
+
+	set fraction [expr {($fraction - $f1f) * 256.}]
+	set f2f      [expr {floor($fraction)}]
+
+	set fraction [expr {($fraction - $f2f) * 256.}]
+	set f3f      [expr {floor($fraction)}]
+
+	set fraction [expr {($fraction - $f3f) * 256.}]
+	set f4f      [expr {floor($fraction)}]
+
+	set fraction [expr {($fraction - $f4f) * 256.}]
+	set f5f      [expr {floor($fraction)}]
+
+	set fraction [expr {($fraction - $f5f) * 256.}]
+	set f6f      [expr {floor($fraction)}]
+
+	set fraction [expr {($fraction - $f6f) * 256.}]
+	set f7f      [expr {floor($fraction)}]
+
+	for {set i 1} {$i &lt;= 7} {incr i} {
+		set var "f$i"
+		append var "f"
+		set f$i [expr {int([set $var])}]
+	}
+
+	set se1 [expr {($sign ? 128 : 0) | ($exponent &gt;&gt; 4)}]
+	set e2f1 [expr {(($exponent &amp; 15) * 16) | $f1}]
+
+	set bytes [binary format cccccccc $f7 $f6 $f5 $f4 $f3 $f2 $e2f1 $se1]
+
+	return $bytes
+ }</pre><p></p><hr noshade="noshade"><p id="footer">Updated <font size="-1">20 Jul 2005, 03:55 GMT</font> &nbsp;-&nbsp; Edit <a href="http://wiki.tcl.tk/edit/756@">IEEE binary float to string conversion</a> &nbsp;-&nbsp; <a href="http://mini.net/tclrevs/756">Revisions</a><br><a href="http://wiki.tcl.tk/2">Search</a> - <a href="http://wiki.tcl.tk/4">Recent changes</a> - 3 <a href="http://wiki.tcl.tk/references/756%21">References</a> - About <a href="http://wiki.tcl.tk/1">Wikit</a> - Go to <a href="http://wiki.tcl.tk/0">The Tcler's Wiki</a> - <a href="http://wiki.tcl.tk/3">Help</a></p>
+</body></html>

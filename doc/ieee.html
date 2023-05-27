@@ -1,0 +1,214 @@
+<html><head><title>The IEEE standard for floating point arithmetic</title>
+
+<link rel="stylesheet" type="text/css" href="ieee_files/headnavbar.css"></head>
+<body><div id="search">
+	<form method="get" action="http://www.google.com/u/supercomputing">
+	<label for="enter">Search</label>
+	<input id="enter" name="q" size="20" maxlength="255" value="Search PSC" type="text">
+	<input name="sa" value="Go" type="submit"></form>
+	<br clear="all">
+</div>
+
+<div id="common">
+	<ul>
+		<li><a href="http://www.psc.edu/sitemap.html">Site Map</a></li>
+		<li><a href="http://www.psc.edu/about_psc.html">About PSC</a></li>
+		<li><a href="http://www.psc.edu/general/help/staff/">Contacts</a></li>
+		<li><a href="http://www.psc.edu/publications/jobs/list.html">Employment</a></li>
+	</ul>
+</div>	  
+
+
+<div id="container">
+<div id="head">
+	<div id="wrap">
+		<div id="logo">
+			<img src="ieee_files/logo-psc.gif" alt="PSC Logo" height="96" width="96">
+		</div> <!-- logo -->
+		
+		<div id="title">
+			<a href="http://www.psc.edu/">PITTSBURGH SUPERCOMPUTING CENTER</a>
+		</div> <!-- title -->
+	 <div class="clear"></div>
+	</div>
+</div>
+
+		<div id="tabs">
+			<ul>
+				<li id="hometab"><a href="http://www.psc.edu/">PSC</a></li>
+				<li><a href="http://www.psc.edu/resources.html" title="Help, Policies, Hardware, Software, Archival Services">
+				Users</a></li>
+				
+				<li><a href="http://www.psc.edu/education.html" title="Workshops, Distance Learning, Outreach">
+				Education</a></li>
+				
+				<li><a href="http://www.psc.edu/work_with_us.html" title="Grants, Consulting, Getting an Account, Corporate Partners">
+				Services</a></li>
+				
+				<li><a href="http://www.psc.edu/research.html" title="Staff, Users, Biomed, Networking, Annual Research Report">
+				Research</a></li>
+				
+				<li><a href="http://www.psc.edu/publicinfo/">News &amp; Media</a></li>
+			</ul>
+		</div>
+
+
+<div id="page">
+
+<div id="content"> 
+
+
+
+
+<h1>The IEEE standard for floating point arithmetic</h1>
+<!-- IEEE.DOC   0 July 1993, ieee.html 14 Feb 94 -->
+<p>
+The IEEE (Institute of Electrical and Electronics Engineers) has
+produced a standard for floating point arithmetic.  This standard
+specifies how single precision (32 bit) and double precision (64 bit)
+floating point numbers are to be represented, as well as how
+arithmetic should be carried out on them.</p>
+
+<!--
+At the PSC, the
+<a href=/machines/frontends/ultrix/ultrixfe.html>Ultrix front-ends</a> use the IEEE format.
+The
+<a href=/machines/frontends/vms/vmsfe.html>VMS</a> front-ends and Cray
+<a href=/machines/cray/c90/c90desc.html>C90</a>
+systems have their own vendor-specific formats for data.</p>
+
+-->
+<p>Because many of our users may have occasion to transfer unformatted or 
+"binary" data between an IEEE machine and the Cray or the VAX/VMS, it is worth 
+noting the details of this format for comparison with the Cray and VAX 
+representations.  The differences in the formats also affect the accuracy of 
+floating point computations.</p>
+
+<h2>Summary:</h2>
+
+<h3>Single Precision</h3>
+
+<p>The IEEE single precision floating point standard representation requires
+a 32 bit word, which may be represented as numbered from 0 to 31, left
+to right.  The first bit is the sign bit, S, the next eight bits are the
+exponent bits, 'E', and the final 23 bits are the fraction 'F':</p>
+
+<pre>  S EEEEEEEE FFFFFFFFFFFFFFFFFFFFFFF
+  0 1      8 9                    31
+</pre>
+
+<p>
+
+The value V represented by the word may be determined as follows:</p>
+
+<ul>
+<li>If E=255 and F is nonzero, then V=NaN  ("Not a number")
+
+</li><li>If E=255 and F is zero and S is 1, then V=-Infinity
+
+</li><li>If E=255 and F is zero and S is 0, then V=Infinity
+
+</li><li>  If 0&lt;E&lt;255 then V=(-1)**S * 2 ** (E-127) * (1.F)
+  where "1.F" is intended to represent the binary number created by
+  prefixing F with an implicit leading 1 and a binary point.
+
+</li><li>  If E=0 and F is nonzero, then V=(-1)**S * 2 ** (-126) * (0.F)
+  These are "unnormalized" values.
+
+</li><li>  If E=0 and F is zero and S is 1, then V=-0
+
+</li><li>  If E=0 and F is zero and S is 0, then V=0
+</li></ul>
+<p>
+
+In particular,</p>
+
+<pre>  0 00000000 00000000000000000000000 = 0
+  1 00000000 00000000000000000000000 = -0
+
+  0 11111111 00000000000000000000000 = Infinity
+  1 11111111 00000000000000000000000 = -Infinity
+
+  0 11111111 00000100000000000000000 = NaN
+  1 11111111 00100010001001010101010 = NaN
+
+  0 10000000 00000000000000000000000 = +1 * 2**(128-127) * 1.0 = 2
+  0 10000001 10100000000000000000000 = +1 * 2**(129-127) * 1.101 = 6.5
+  1 10000001 10100000000000000000000 = -1 * 2**(129-127) * 1.101 = -6.5
+
+  0 00000001 00000000000000000000000 = +1 * 2**(1-127) * 1.0 = 2**(-126)
+  0 00000000 10000000000000000000000 = +1 * 2**(-126) * 0.1 = 2**(-127) 
+  0 00000000 00000000000000000000001 = +1 * 2**(-126) * 
+                                       0.00000000000000000000001 = 
+                                       2**(-149)  (Smallest positive value)
+</pre>
+
+
+<h3>Double Precision</h3>
+<p>
+The IEEE double precision floating point standard representation requires
+a 64 bit word, which may be represented as numbered from 0 to 63, left
+to right.  The first bit is the sign bit, S, the next eleven bits are the
+exponent bits, 'E', and the final 52 bits are the fraction 'F':</p>
+
+<pre>  S EEEEEEEEEEE FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+  0 1        11 12                                                63
+</pre>
+
+<p>
+The value V represented by the word may be determined as follows:</p>
+
+<ul>
+<li>  If E=2047 and F is nonzero, then V=NaN  ("Not a number")
+
+</li><li>  If E=2047 and F is zero and S is 1, then V=-Infinity
+
+</li><li>  If E=2047 and F is zero and S is 0, then V=Infinity
+
+</li><li>  If 0&lt;E&lt;2047 then V=(-1)**S * 2 ** (E-1023) * (1.F)
+  where "1.F" is intended to represent the binary number created by
+  prefixing F with an implicit leading 1 and a binary point.
+
+</li><li>  If E=0 and F is nonzero, then V=(-1)**S * 2 ** (-1022) * (0.F)
+  These are "unnormalized" values.
+
+</li><li>  If E=0 and F is zero and S is 1, then V=-0
+
+</li><li>  If E=0 and F is zero and S is 0, then V=0
+</li></ul>
+
+<h2>Reference:</h2>
+<cite>
+ANSI/IEEE Standard 754-1985,<br>
+Standard for Binary Floating Point Arithmetic<br>
+</cite>
+
+<h2>See also:</h2>
+<ul>
+<li><a href="http://www.psc.edu/htbin/software_by_category.pl/math_stats">
+Mathematical and statistical</a> software packages installed on PSC
+machines.
+</li><li><a href="http://www.psc.edu/htbin/software_by_category.pl/hetero_software">
+Distributed Computing</a>
+</li><li><a href="http://www.psc.edu/htbin/software_by_category.pl/utilities">Utilities software
+packages and libraries</a> installed on PSC machines.
+</li></ul><p>
+
+</p><p>
+ </p></div>  <!-- content -->
+
+<div id="sidebar">
+
+</div>  <!-- sidebar -->
+	<div class="clear"></div>
+</div> <!-- page -->
+
+ 
+ <div id="footer">
+		<p>
+		© Pittsburgh Supercomputing Center, 4400 Fifth Avenue, Pittsburgh, PA 15213 Phone: 412.268.4960 Fax: 412.268.5832
+		</p>
+ </div>	<!-- footer -->
+</div> <!-- container -->
+
+</body></html>

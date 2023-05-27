@@ -1,0 +1,734 @@
+<html><head><title>RP66 V1</title>
+
+
+
+<script language="JavaScript">
+<!--
+
+function SymError()
+{
+  return true;
+}
+
+window.onerror = SymError;
+
+var SymRealWinOpen = window.open;
+
+function SymWinOpen(url, name, attributes)
+{
+  return (new Object());
+}
+
+window.open = SymWinOpen;
+
+//-->
+</script>
+
+<script language="javascript">
+<!--
+var r_;
+function initpath(){ // Fix MSIE3.0 insanity
+  var i,j;
+  r_=this.location.href;
+  j=r_.length;
+  i=j-1;
+  while(i>0){
+    if (r_.substring(i,j)=="/" || r_.substring(i,j)=="\\"){
+     r_=r_.substring(0,j);
+     break;
+    }else{
+     i--; j--;
+    }
+  }
+}
+function ver(){
+  var s=navigator.appVersion;
+  var v=s.substring(0,1);
+  return parseInt(v);
+}
+function getwin(s){
+  var i,n=parent.frames.length;
+  for (i=0;i<n;i++){
+    if (parent.frames[i].name == s){
+       return parent.frames[i];
+       break;
+    }
+  }
+  return null;
+}
+function loadSec(sec){
+  var widx,wdoc,x='';
+  if (loadSec.arguments.length>1) x='#'+loadSec.arguments[1];
+  widx=getwin('RP66V1_IDX');
+  wdoc=getwin('RP66V1_DOC');
+  widx.location.href=r_+sec+"_ix.html";
+  wdoc.location.href=r_+"../"+sec+".html"+x;
+}
+function init(){
+  var f;
+  initpath();
+  if (ver() >= 4) hook();
+  f=self.location.search;
+  if (!f || f=='') f=parent.location.search;
+  if (f && f!=''){
+    f=f.substring(1,f.length);
+    if (f.indexOf('.htm')<=0){
+      var s=f.split('?');
+      if (s.length>1) loadSec(s[0],s[1]);
+      else loadSec(f);
+    }else{
+      var s=f.split('=');
+      f=s[0];
+      s=(s.length>1)?'RP66V1_IDX':'RP66V1_DOC';
+      w=getwin(s);
+      w.location.href=r_+f;
+    }
+  }
+}
+//-->
+</script>
+<script language="javascript">
+<!--
+var _tag='<img width=16 height=16 border=0 src=../../../../images/';
+var _t,_tw,_dw;
+var _n,_tt,_s=-1;
+function initTree(tw,dw,tt){
+  _t=new Array();
+  _n=0;
+  _tw=parent.frames[tw];
+  _dw=parent.frames[dw];
+  _tt=tt;
+}
+function node(l,n){
+  this.level=l;
+  this.name=n;
+  this.next=0;
+  this.sub=0;
+  this.closed=true;
+  this.href=null;
+}
+function openall(){
+  var i;
+  for(i=0;i<_n;i++) _t[i].closed=false;
+  show();
+}
+function closeall(){
+  var i;
+  for(i=0;i<_n;i++) _t[i].closed=true;
+  show();
+}
+function add(l,n){
+  _t[_n]=new node(l,n);
+  if (add.arguments.length>2){
+    _t[_n].href=add.arguments[2];
+  }
+  _n++;
+}
+function build(){
+  var i,j=_t[0].level;
+  for(i=0;i<_n;i++) _t[i].level -= j;
+  for(i=0;i<_n;i++){
+    _t[i].sub=0;
+    _t[i].next=0;
+    j=i+1;
+    if (j<_n){
+      if (_t[i].level<_t[j].level) _t[i].sub=j;
+      while(j<_n){
+	if (_t[i].level==_t[j].level){
+	  _t[i].next=j;
+	  break;
+	}else{
+	  if (_t[j].level<_t[i].level)
+	    break;
+	  else
+	    j++;
+	}
+      }
+    }
+  }
+}
+function anchor(i,d){
+  if (_s==i) d.write('<blink>*</blink>');
+  if (_t[i].href!=null)
+     d.write('<a href="',_t[i].href,'" target="',_dw.name,'">');
+  if (_t[i].sub<=0) d.write(_tag,'dc.gif>');
+  if (_t[i].level==0) d.write('<b>');
+  d.write(' ',_t[i].name);
+  if (_t[i].level==0) d.write('</b>');
+  if (_t[i].href!=null) d.write('</a>');
+  d.writeln('<br>');
+}
+function toggle(i){
+  _t[i].closed=(!_t[i].closed);
+  show(i);
+}
+function show(){
+  var i,j;
+  var m,nn;
+  var d=_tw.document;
+  var y=0,t=false;
+  if (show.arguments.length>0){
+     _s=show.arguments[0];
+     t=true;
+  }else{
+     _s=-1;
+  }
+  d.open('text/html');
+  d.writeln('<'+'html><'+'head><meta http-equiv=pragma content=no-cache>');
+  d.writeln('<base href="'+r_+'">');
+  d.writeln('<'+'script'+' language=javascript>');
+  d.writeln('var w=parent.frames["'+self.name+'"];');
+  d.writeln('function T(i){');
+  d.writeln('w.toggle(i);');
+  d.writeln('}');
+  d.writeln('function M(i){');
+  d.writeln('var x=w._t[i].closed?"Open":"Close";');
+  d.writeln('self.status=x+" this node.";');
+  d.writeln('return true;');
+  d.writeln('}');
+  d.writeln('</','script','></','head><','body>');
+  d.write('<b>',_tt,'</b><small>');
+  d.write('<hr>[<a href="javascript:w.openall()" onMouseOver="self.status=',"'",'Expand all tree nodes',"'",';return true">Expand</a>]');
+  d.write(' [<a href="javascript:w.closeall()" onMouseOver="self.status=',"'",'Collapse tree to root node(s)',"'",';return true">Collapse</a>]');
+  d.writeln('</small><p><nobr><small>');
+  m=new Array(10);
+  for(i=0;i<10;i++) m[i]=false;
+  i=0;
+  while(i<_n){
+    for(j=0;j<_t[i].level;j++)
+      d.write(_tag, m[j]?'b1':'b0','.gif>');
+    m[_t[i].level]=(_t[i].next>0)?true:false;
+    if (t){
+      if (i<_s) y+=18;
+    }
+    if (_t[i].sub<=0){
+      d.write(_tag, (_t[i].next>0)?"b3":"b2", '.gif>');
+      anchor(i,d);
+      i++;
+    }else{
+      nn=(_t[i].next>0);
+      if (_t[i].closed){
+	    d.write('<a href="javascript:T(',i,')" onMouseOver="return M(',i,')">',
+                _tag, nn?'c3':'c2', '.gif>',
+                _tag, 'fc.gif></a>');
+	    anchor(i,d);
+	    if (nn){
+	      i=_t[i].next;
+	    }else{
+	      j=_t[i].level;
+	      i++;
+	      while(i<_n){
+	        if (_t[i].level<=j) break;
+	        else i++;
+	      }
+	    }
+      }else{
+	    d.write('<a href="javascript:T(',i,')" onMouseOver="return M(',i,')">',
+		  _tag, nn?'o3':'o2','.gif>',
+		  _tag, 'fo.gif></a>');
+	    anchor(i,d);
+	    i++;
+      }
+    }
+  }
+  d.writeln('</small><hr></html>');
+  d.close();
+  if (t) _tw.scroll(0,y);
+  _tw.focus();
+  m=null;
+}
+function hook(){
+initTree('RP66V1_IDX','RP66V1_DOC','RRP66 V1');
+add(1,'1 Introduction','../rp66v1_sec1.html#1');
+add(2,'1.1 Aim: Why Introduce a New Standard?','../rp66v1_sec1.html#1_1');
+add(2,'1.2 Data Objects','../rp66v1_sec1.html#1_2');
+add(2,'1.3 Origins','../rp66v1_sec1.html#1_3');
+add(2,'1.4 Multiple Frame Types','../rp66v1_sec1.html#1_4');
+add(2,'1.5 Update Objects','../rp66v1_sec1.html#1_5');
+add(2,'1.6 Source References and Calibration Objects','../rp66v1_sec1.html#1_6');
+add(2,'1.7 Data Encryption','../rp66v1_sec1.html#1_7');
+add(2,'1.8 Logical Record','../rp66v1_sec1.html#1_8');
+add(1,'2 Data Organization','../rp66v1_sec2.html#2');
+add(2,'2.1 Scope of the Standard','../rp66v1_sec2.html#2_1');
+add(2,'2.2 Logical Format','../rp66v1_sec2.html#2_2');
+add(3,'2.2.1 Representation Codes','../rp66v1_sec2.html#2_2_1');
+add(3,'2.2.2 Logical Record (LR)','../rp66v1_sec2.html#2_2_2');
+add(4,'2.2.2.1 Logical Record Segment Header (LRSH)','../rp66v1_sec2.html#2_2_2_1');
+add(4,'2.2.2.2 Logical Record Segment Encryption Packet (LRSEP)','../rp66v1_sec2.html#2_2_2_2');
+add(4,'2.2.2.3 Logical Record Segment Body (LRB)','../rp66v1_sec2.html#2_2_2_3');
+add(4,'2.2.2.4 Logical Record Segment Trailer (LRST)','../rp66v1_sec2.html#2_2_2_4');
+add(4,'2.2.2.5 Logical Record Body (LRB)','../rp66v1_sec2.html#2_2_2_5');
+add(3,'2.2.3 Logical File (LF)','../rp66v1_sec2.html#2_2_3');
+add(4,'2.2.3.1 File Header Logical Record (FHLR)','../rp66v1_sec2.html#2_2_3_1');
+add(2,'2.3 Physical Format','../rp66v1_sec2.html#2_3');
+add(3,'2.3.1 Terminology','../rp66v1_sec2.html#2_3_1');
+add(3,'2.3.2 Storage Unit Label (SUL)','../rp66v1_sec2.html#2_3_2');
+add(3,'2.3.3 Storage Unit Requirements','../rp66v1_sec2.html#2_3_3');
+add(3,'2.3.4 Storage Set Requirements','../rp66v1_sec2.html#2_3_4');
+add(3,'2.3.5 Storage Unit Terminators','../rp66v1_sec2.html#2_3_5');
+add(3,'2.3.6 Record Structure Requirements','../rp66v1_sec2.html#2_3_6');
+add(4,'2.3.6.1 Visible Record Length','../rp66v1_sec2.html#2_3_6_1');
+add(4,'2.3.6.2 Format Version','../rp66v1_sec2.html#2_3_6_2');
+add(4,'2.3.6.3 Visible Envelope','../rp66v1_sec2.html#2_3_6_3');
+add(4,'2.3.6.4 Minimum Visible Record Length','../rp66v1_sec2.html#2_3_6_4');
+add(4,'2.3.6.5 Maximum Visible Record Length','../rp66v1_sec2.html#2_3_6_5');
+add(3,'2.3.7 Industry-Standard 9-Track Magnetic Tape','../rp66v1_sec2.html#2_3_7');
+add(4,'2.3.7.1 Physical Tape Marks','../rp66v1_sec2.html#2_3_7_1');
+add(3,'2.3.8 Considerations on Moving DLIS','../rp66v1_sec2.html#2_3_8');
+add(1,'3 - Logical Record Syntax','../rp66v1_sec3.html');
+add(2,'3.1 Record Format Categories','../rp66v1_sec3.html#3_1');
+add(2,'3.2 Explicitly Formatted Logical Record (EFLR)','../rp66v1_sec3.html#3_2');
+add(3,'3.2.1 EFLR: General Layout','../rp66v1_sec3.html#3_2_1');
+add(3,'3.2.2 EFLR: Component Structure','../rp66v1_sec3.html#3_2_2');
+add(4,'3.2.2.1 Component Descriptor','../rp66v1_sec3.html#3_2_2_1');
+add(4,'3.2.2.2 Component Usage','../rp66v1_sec3.html#3_2_2_2');
+add(3,'3.2.3 EFLR: Examples','../rp66v1_sec3.html#3_2_3');
+add(4,'3.2.3.1 Symbolic Illustration of an EFLR','../rp66v1_sec3.html#3_2_3_1');
+add(4,'3.2.3.2 Syntactic Illustration of an EFLR','../rp66v1_sec3.html#3_2_3_2');
+add(2,'3.3 Indirectly Formatted Logical Record','../rp66v1_sec3.html#3_3');
+add(3,'3.3.1 IFLR: Specific Structure','../rp66v1_sec3.html#3_3_1');
+add(1,'4 - Semantic Terminology and Rules','../rp66v1_sec4.html');
+add(2,'4.1 Terminology','../rp66v1_sec4.html#4_1');
+add(3,'4.1.1 Names','../rp66v1_sec4.html#4_1_1');
+add(3,'4.1.2 Lists','../rp66v1_sec4.html#4_1_2');
+add(3,'4.1.3 Origins','../rp66v1_sec4.html#4_1_3');
+add(3,'4.1.4 Channels','../rp66v1_sec4.html#4_1_4');
+add(3,'4.1.5 Frames and Frame Data','../rp66v1_sec4.html#4_1_5');
+add(3,'4.1.6 Static Information','../rp66v1_sec4.html#4_1_6');
+add(3,'4.1.7 Transient Information','../rp66v1_sec4.html#4_1_7');
+add(3,'4.1.8 Spatial Coordinates of a Well','../rp66v1_sec4.html#4_1_8');
+add(4,'4.1.8.1 Tool Zero Point','../rp66v1_sec4.html#4_1_8_1');
+add(3,'4.1.9 Producers and Consumers','../rp66v1_sec4.html#4_1_9');
+add(3,'4.1.10 Logical Record Types','../rp66v1_sec4.html#4_1_10');
+add(3,'4.1.11 Private Data Set Types','../rp66v1_sec4.html#4_1_11');
+add(2,'4.2 Rules Governing Semantic Structure of Logical Files','../rp66v1_sec4.html#4_2');
+add(3,'4.2.1 Origins','../rp66v1_sec4.html#4_2_1');
+add(3,'4.2.2 Names','../rp66v1_sec4.html#4_2_2');
+add(4,'4.2.2.1 Attribute Names','../rp66v1_sec4.html#4_2_2_1');
+add(4,'4.2.2.2 Object Names','../rp66v1_sec4.html#4_2_2_2');
+add(4,'4.2.2.3 Set Names','../rp66v1_sec4.html#4_2_2_3');
+add(4,'4.2.2.4 Symbolic Codes','../rp66v1_sec4.html#4_2_2_4');
+add(3,'4.2.3 Use of References','../rp66v1_sec4.html#4_2_3');
+add(3,'4.2.4 Multiple Occurrences of a Set Type','../rp66v1_sec4.html#4_2_4');
+add(2,'4.3 Restrictions Permitted','../rp66v1_sec4.html#4_3');
+add(2,'4.4 Frequently Used Attributes','../rp66v1_sec4.html#4_4');
+add(3,'4.4.1 LONG-NAME Attribute','../rp66v1_sec4.html#4_4_1');
+add(3,'4.4.2 DESCRIPTION Attribute','../rp66v1_sec4.html#4_4_2');
+add(3,'4.4.3 DIMENSION Attribute','../rp66v1_sec4.html#4_4_3');
+add(3,'4.4.4 AXIS Attribute','../rp66v1_sec4.html#4_4_4');
+add(2,'4.5 Ordering of Attributes','../rp66v1_sec4.html#4_5');
+add(1,'5 - Semantics: Static and Frame Data','../rp66v1_sec5.html');
+add(2,'5.1 File Header Logical Record (FHLR)','../rp66v1_sec5.html#5_1');
+add(2,'5.2 Origin Logical Record (OLR)','../rp66v1_sec5.html#5_2');
+add(3,'5.2.1 ORIGIN Objects','../rp66v1_sec5.html#5_2_1');
+add(3,'5.2.2 WELL-REFERENCE-POINT Object','../rp66v1_sec5.html#5_2_2');
+add(2,'5.3 Axis Logical Record (AXIS)','../rp66v1_sec5.html#5_3');
+add(3,'5.3.1 AXIS Objects','../rp66v1_sec5.html#5_3_1');
+add(2,'5.4 Long Name Logical Record (LNAME)','../rp66v1_sec5.html#5_4');
+add(3,'5.4.1 LONG-NAME Objects','../rp66v1_sec5.html#5_4_1');
+add(2,'5.5 Channel Logical Record (CHANNL)','../rp66v1_sec5.html#5_5');
+add(3,'5.5.1 CHANNEL Objects','../rp66v1_sec5.html#5_5_1');
+add(2,'5.6 Frame Data Logical Record (FDATA)','../rp66v1_sec5.html#5_6');
+add(3,'5.6.1 Frames','../rp66v1_sec5.html#5_6_1');
+add(2,'5.7 Frame Logical Record (FRAME)','../rp66v1_sec5.html#5_7');
+add(3,'5.7.1 FRAME Objects','../rp66v1_sec5.html#5_7_1');
+add(3,'5.7.2 Data Path','../rp66v1_sec5.html#5_7_2');
+add(4,'5.7.2.1 PATH Objects','../rp66v1_sec5.html#5_7_2_1');
+add(2,'5.8 Static Data Logical Record (STATIC)','../rp66v1_sec5.html#5_8');
+add(3,'5.8.1 ZONE Objects','../rp66v1_sec5.html#5_8_1');
+add(3,'5.8.2 PARAMETER Objects','../rp66v1_sec5.html#5_8_2');
+add(3,'5.8.3 EQUIPMENT Objects','../rp66v1_sec5.html#5_8_3');
+add(3,'5.8.4 TOOL Objects','../rp66v1_sec5.html#5_8_4');
+add(3,'5.8.5 PROCESS Objects','../rp66v1_sec5.html#5_8_5');
+add(3,'5.8.6 COMPUTATION Objects','../rp66v1_sec5.html#5_8_6');
+add(3,'5.8.7 Calibration Information','../rp66v1_sec5.html#5_8_7');
+add(4,'5.8.7.1 CALIBRATION-MEASUREMENT Objects','../rp66v1_sec5.html#5_8_7_1');
+add(4,'5.8.7.2 CALIBRATION-COEFFICIENT Objects','../rp66v1_sec5.html#5_8_7_2');
+add(4,'5.8.7.3 CALIBRATION Objects','../rp66v1_sec5.html#5_8_7_3');
+add(3,'5.8.8 GROUP Objects','../rp66v1_sec5.html#5_8_8');
+add(3,'5.8.9 SPLICE Objects','../rp66v1_sec5.html#5_8_9');
+add(2,'5.9 Unformatted Data Logical Records (NOFORM)','../rp66v1_sec5.html#5_9');
+add(2,'5.10 Unformatted Data Identifier Logical Records (UDI)','../rp66v1_sec5.html#5_10');
+add(3,'5.10.1 NO-FORMAT Objects','../rp66v1_sec5.html#5_10_1');
+add(2,'5.11 End of Data Logical Records (EOD)','../rp66v1_sec5.html#5_11');
+add(1,'6 - Semantics: Transient Data','../rp66v1_sec6.html');
+add(2,'6.1 Script Logical Record (SCRIPT)','../rp66v1_sec6.html#6_1');
+add(3,'6.1.1 Message Objects','../rp66v1_sec6.html#6_1_1');
+add(3,'6.1.2 Comment Objects','../rp66v1_sec6.html#6_1_2');
+add(2,'6.2 Update Logical Records (UPDATE)','../rp66v1_sec6.html#6_2');
+add(3,'6.2.1 Update Objects','../rp66v1_sec6.html#6_2_1');
+add(1,'7 - Semantics: Dictionaries','../rp66v1_sec7.html');
+add(2,'7.1 Specification Logical Record (SPEC)','../rp66v1_sec7.html#7_1');
+add(3,'7.1.1 Code Objects','../rp66v1_sec7.html#7_1_1');
+add(3,'7.1.2 Attribute Objects','../rp66v1_sec7.html#7_1_2');
+add(3,'7.1.3 Object-Type Objects','../rp66v1_sec7.html#7_1_3');
+add(3,'7.1.4 Unit-Symbol Objects','../rp66v1_sec7.html#7_1_4');
+add(3,'7.1.5 Representation-Code Objects','../rp66v1_sec7.html#7_1_5');
+add(3,'7.1.6 EFLR Objects','../rp66v1_sec7.html#7_1_6');
+add(3,'7.1.7 IFLR Objects','../rp66v1_sec7.html#7_1_7');
+add(3,'7.1.8 Specification Objects','../rp66v1_sec7.html#7_1_8');
+add(2,'7.2 Dictionary Logical Record (DICT)','../rp66v1_sec7.html#7_2');
+add(3,'7.2.1 Lexicon Objects','../rp66v1_sec7.html#7_2_1');
+add(3,'7.2.2 IDENTIFIER Objects','../rp66v1_sec7.html#7_2_2');
+add(3,'7.2.3 Option Objects','../rp66v1_sec7.html#7_2_3');
+add(3,'7.2.4 BASE-DICTIONARY Objects','../rp66v1_sec7.html#7_2_4');
+add(1,'A - Logical Record Types','../rp66v1_appa.html');
+add(2,'A.1 Indirectly Formatted Logical Records','../rp66v1_appa.html#A_1');
+add(2,'A.2 Explicitly Formatted Logical Records','../rp66v1_appa.html#A_2');
+add(1,'B -Representation Codes','../rp66v1_appb.html');
+add(2,'B.1 Code FSHORT: Low Precision Floating Point','../rp66v1_appb.html#B_1');
+add(2,'B.2 Code FSINGL: IEEE Single Precision Floating Point','../rp66v1_appb.html#B_2');
+add(2,'B.3 Code FSING1: Validated Single Precision Floating Point','../rp66v1_appb.html#B_3');
+add(2,'B.4 Code FSING2: Two-Way Validated Single Precision Floating Point','../rp66v1_appb.html#B_4');
+add(2,'B.5 Code ISINGL: IBM Single Precision Floating Point','../rp66v1_appb.html#B_5');
+add(2,'B.6 Code VSINGL: VAX Single Precision Floating Point','../rp66v1_appb.html#B_6');
+add(2,'B.7 Code FDOUBL: IEEE Double Precision Floating Point','../rp66v1_appb.html#B_7');
+add(2,'B.8 Code FDOUB1: Validated Double Precision Floating Point','../rp66v1_appb.html#B_8');
+add(2,'B.9 Code FDOUB2: Two-Way Validated Double Precision Floating Point','../rp66v1_appb.html#B_9');
+add(2,'B.10 Code CSINGL: Single Precision Complex','../rp66v1_appb.html#B_10');
+add(2,'B.11 Code CDOUBL: Double Precision Complex','../rp66v1_appb.html#B_11');
+add(2,'B.12 Code SSHORT: Short Signed Integer','../rp66v1_appb.html#B_12');
+add(2,'B.13 Code SNORM: Normal Signed Integer','../rp66v1_appb.html#B_13');
+add(2,'B.14 Code SLONG: Long Signed Integer','../rp66v1_appb.html#B_14');
+add(2,'B.15 Code USHORT: Short Unsigned Integer','../rp66v1_appb.html#B_15');
+add(2,'B.16 Code UNORM: Normal Unsigned Integer','../rp66v1_appb.html#B_16');
+add(2,'B.17 Code ULONG: Long Unsigned Integer','../rp66v1_appb.html#B_17');
+add(2,'B.18 Code UVARI: Variable-Length Unsigned Integer','../rp66v1_appb.html#B_18');
+add(2,'B.19 Code IDENT: Variable-Length Identifier','../rp66v1_appb.html#B_19');
+add(2,'B.20 Code ASCII: Variable-Length ASCII Character String','../rp66v1_appb.html#B_20');
+add(2,'B.21 Code DTIME: Date/Time','../rp66v1_appb.html#B_21');
+add(2,'B.22 Code ORIGIN: Origin Reference','../rp66v1_appb.html#B_22');
+add(2,'B.23 Code OBNAME: Object Name','../rp66v1_appb.html#B_23');
+add(2,'B.24 Code OBJREF: Object Reference','../rp66v1_appb.html#B_24');
+add(2,'B.25 Code ATTREF: Attribute Reference','../rp66v1_appb.html#B_25');
+add(2,'B.26 Code STATUS: Boolean Status Value','../rp66v1_appb.html#B_26');
+add(2,'B.27 Code UNITS: Units Expression','../rp66v1_appb.html#B_27');
+add(1,'C - PROPERTY INDICATORS','../rp66v1_appc.html');
+add(1,'D - CHANGEABLE ATTRIBUTES','../rp66v1_appd.html');
+add(1,'E - CHECKSUM ALGORITHM','../rp66v1_appe.html');
+add(1,'F - UNIT SYMBOLS','../rp66v1_appf.html');
+add(2,'F.1 Base Units','../rp66v1_appf.html#F_1');
+add(2,'F.2 Derived Units','../rp66v1_appf.html#F_2');
+add(1,'Glossary','../rp66v1_defs.html');
+build();
+}
+//-->
+</script>
+
+<script language="javascript">
+<!--
+function getTopWin(s) {
+  var i,n=top.frames.length;
+  for (i=0;i<n;i++){
+    if (top.frames[i].name == s){
+       return top.frames[i];
+       break;
+    }
+  }
+  return null;
+}
+function loadframeset(){
+  var w=null,t='';
+  if (self==top || self==parent) w=self;
+  else if (self.name=='RP66V1_DOC') w=parent;
+  else if (self.name=='EPIC2_2') w=self;
+  if (w){
+    var m=getTopWin('EPIC2_2-MAIN');
+    if (m) t=m._prefix[m._style];
+    w.location.href='main'+t+'.html';
+  }
+}
+//-->
+</script></head>
+<body onload="var SymTmpWinOpen = window.open; window.open = SymWinOpen; init();loadframeset(); window.open = SymTmpWinOpen;">
+<h3>RP66 V1</h3>
+
+<hr>
+<nobr>
+
+<!-- list of 1st level topics -->
+<li><a href="javascript:loadSec('rp66v1_pref')" onmouseover="self.status='Preface';return true">Preface</a>
+</li><li><a href="javascript:loadSec('rp66v1_sec1')" onmouseover="self.status='1 - Introduction';return true">1 - Introduction</a>
+</li><li><a href="javascript:loadSec('rp66v1_sec2')" onmouseover="self.status='2 - Data Organization';return true">2 - Data Organization</a>
+</li><li><a href="javascript:loadSec('rp66v1_sec3')" onmouseover="self.status='3 - Logical Record Syntax';return true">3 - Logical Record Syntax</a>
+</li><li><a href="javascript:loadSec('rp66v1_sec4')" onmouseover="self.status='4 - Semantic Terminology and Rules';return true">4 - Semantic Terminology and Rules</a>
+</li><li><a href="javascript:loadSec('rp66v1_sec5')" onmouseover="self.status='5 - Semantics: Static and Frame Data';return true">5 - Semantics: Static and Frame Data</a>
+</li><li><a href="javascript:loadSec('rp66v1_sec6')" onmouseover="self.status='5 - Semantics: Transient Data';return true">6 - Semantics: Transient Data</a>
+</li><li><a href="javascript:loadSec('rp66v1_sec7')" onmouseover="self.status='5 - Semantics: Dictionaries';return true">7 - Semantics: Dictionaries</a>
+<p><b>Appendices</b>
+
+</p></li><li><a href="javascript:loadSec('rp66v1_appa')" onmouseover="self.status='A - Logical Record Types';return true">A - Logical Record Types</a>
+</li><li><a href="javascript:loadSec('rp66v1_appb')" onmouseover="self.status='B - Representation Codes';return true">B - Representation Codes</a>
+</li><li><a href="javascript:loadSec('rp66v1_appc')" onmouseover="self.status='C - Property Indicators';return true">C - Property Indicators</a>
+</li><li><a href="javascript:loadSec('rp66v1_appd')" onmouseover="self.status='D - Changeable Attributes';return true">D - Changeable Attributes</a>
+</li><li><a href="javascript:loadSec('rp66v1_appe')" onmouseover="self.status='E - Checksum Algorithm';return true">E - Checksum Algorithm</a>
+</li><li><a href="javascript:loadSec('rp66v1_appf')" onmouseover="self.status='F - Unit Symbols';return true">F - Unit Symbols</a>
+</li><li><a href="javascript:loadSec('rp66v1_defs')" onmouseover="self.status='Glossary';return true">Glossary</a>
+<p>
+
+</p><p>
+
+<script language="javascript">
+<!--
+if (ver() >= 4) document.writeln('<li><a href="javascript:show()" target=_self onMouseOver="self.status=',"'",'View TOC as collapsable tree',"'",';return true">Contents Tree</a>');
+//-->
+</script></p></li><li><a href="javascript:show()" target="_self" onmouseover="self.status='View TOC as collapsable tree';return true">Contents Tree</a>
+
+
+</li></nobr>
+
+<!--
+POSC Specifications v2.2
+Copyright 1997 POSC. All rights reserved.
+-->
+<!-- Generated: Fri Dec 12 14:54:15 1997 -->
+<script language="JavaScript">
+<!--
+
+window.open = SymRealWinOpen;
+
+//-->
+</script>
+
+<!-- -------------------------------------------------
+TABLE OF CONTENTS
+FORWARD
+SPECIAL NOTES viii
+PREFACE ix
+Chapter 1 INTRODUCTION 1-1
+1.1 Aim: Why Introduce a New Standard? 1-1
+1.2 Data Object 1-1
+1.3 Origin 1-1
+1.4 Multiple Frame Types 1-2
+1.5 Update Objects 1-2
+1.6 Source References and Calibration Objects 1-2
+1.7 Data Encryption 1-2
+1.8 Logical Record 1-3
+Chapter 2 DATA ORGANIZATION 2-1
+2.1 Scope of the Standard 2-1
+2.2 Logical Format 2-1
+2.2.1 Representation Codes 2-2
+2.2.2 Logical Record (LR) 2-2
+2.2.2.1 Logical Record Segment Header (LRSH) 2-3
+2.2.2.2 Logical Record Segment Encryption Packet (LRSEP) 2-5
+2.2.2.3 Logical Record Segment Body (LRB) 2-6
+2.2.2.4 Logical Record Segment Trailer (LRST) 2-6
+2.2.2.5 Logical Record Body (LRB) 2-6
+2.2.3 Logical File (LF) 2-6
+2.2.3.1 File Header Logical Record (FHLR) 2-7
+2.3 Physical Format 2-7
+2.3.1 Terminology 2-7
+2.3.2 Storage Unit Label (SUL) 2-8
+2.3.3 Storage Unit Requirements 2-9
+2.3.4 Storage Set Requirements 2-9
+2.3.5 Storage Unit Terminators 2-10
+2.3.6 Record Structure Requirements 2-10
+2.3.6.1 Visible Record Length 2-10
+2.3.6.2 Format Version 2-10
+2.3.6.3 Visible Envelope 2-11
+2.3.6.4 Minimum Visible Record Length 12-1
+2.3.6.5 Maximum Visible Record Length 2-11
+2.3.7 Industry-Standard 9-Track Magnetic Tape 2-11
+2.3.7.1 Physical Tape Marks 2-12
+2.3.8 Considerations on Moving DLIS 2-13
+Chapter 3 LOGICAL RECORD SYNTAX 3-1
+3.1 Record Format Categories 3-1
+3.2 Explicitly Formatted Logical Record (EFLR) 3-1
+3.2.1 EFLR: General Layout 3-1
+3.2.2 EFLR: Component Structure 3-2
+3.2.2.1 Component Descriptor 3-3
+3.2.2.2 Component Usage 3-6
+3.2.3 EFLR: Examples 3-7
+3.2.3.1 Symbolic Illustration of an EFLR 3-7
+3.2.3.2 Syntactic Illustration of an EFLR 3-8
+3.3 Indirectly Formatted Logical Record 3-13
+3.3.1 IFLR: Specific Structure 3-13
+Chapter 4 SEMANTIC TERMINOLOGY AND RULES 4-1
+4.1 Terminology 4-1
+4.1.1 Names 4-1
+4.1.2 Lists 4-1
+4.1.3 Origins 4-1
+4.1.4 Channels 4-2
+4.1.5 Frames and Frame Data 4-2
+4.1.6 Static Information 4-2
+4.1.7 Transient Information 4-2
+4.1.8 Spatial Coordinates of a Well 4-2
+4.1.8.1 Tool Zero Point 4-3
+4.1.9 Producers and Consumers 4-4
+4.1.10 Logical Record Types 4-4
+4.1.11 Private Data Set Types 4-4
+4.2 Rules Governing Semantic Structure of Logical Files 4-4
+4.2.1 Origins 4-4
+4.2.2 Names 4-5
+4.2.2.1 Attribute Names 4-5
+4.2.2.2 Object Names 4-5
+4.2.2.3 Set Names 4-5
+4.2.2.4 Symbolic Codes 4-5
+4.2.3 Use of References 4-5
+4.2.4 Multiple Occurrences of a Set Type 4-6
+4.3 Restrictions Permitted 4-6
+4.4 Frequently Used Attributes 4-7
+4.4.1 LONG-NAME Attribute 4-7
+4.4.2 DESCRIPTION Attribute 4-7
+4.4.3 DIMENSION Attribute 4-8
+4.4.4 AXIS Attribute 4-9
+4.5 Ordering of Attributes 4-9
+Chapter 5 SEMANTICS 5-1
+5.1 File Header Logical Record (FHLR) 5-1
+5.2 Origin Logical Record (OLR) 5-3
+5.2.1 ORIGIN Objects 5-3
+5.2.2 WELL-REFERENCE-POINT Object 5-5
+5.3 Axis Logical Record (AXIS) 5-7
+5.3.1 AXIS Objects 5-7
+5.4 Long Name Logical Record (LNAME) 5-8
+5.4.1 LONG-NAME Objects 5-8
+5.5 Channel Logical Record (CHANNL) 5-10
+5.5.1 CHANNEL Objects 5-10
+5.6 Frame Data Logical Record (FDATA) 5-11
+5.6.1 Frames 5-12
+5.7 Frame Logical Record (FRAME) 5-12
+5.7.1 FRAME Objects 5-12
+5.7.2 Data Path 5-14
+5.7.2.1 PATH Objects 5-15
+5.8 Static Data Logical Record (STATIC) 5-17
+5.8.1 ZONE Objects 5-18
+5.8.2 PARAMETER Objects 5-19
+5.8.3 EQUIPMENT Objects 5-20
+5.8.4 TOOL Objects 5-23
+5.8.5 PROCESS Objects 5-24
+5.8.6 COMPUTATION Objects 5-25
+5.8.7 Calibration Information 5-27
+5.8.7.1 CALIBRATION-MEASUREMENT Objects 5-27
+5.8.7.2 CALIBRATION-COEFFICIENT Objects 5-30
+5.8.7.3 CALIBRATION Objects 5-31
+5.8.8 GROUP Objects 5-32
+5.8.9 SPLICE Objects 5-33
+5.9 Unformatted Data Logical Records (NOFORM) 5-34
+5.10 Unformatted Data Identifier Logical Records (UDI) 5-34
+5.10.1 NO-FORMAT Objects 5-34
+5.11 End of Data Logical Records (EOD) 5-35
+Chapter 6 SEMANTICS 6-1
+6.1 Script Logical Record (SCRIPT) 6-1
+6.1.1 Message Objects 6-1
+6.1.2 Comment Objects 6-2
+6.2 Update Logical Records (UPDATE) 6-2
+6.2.1 Update Objects 6-3
+Chapter 7 SEMANTICS 7-1
+7.1 Specification Logical Record (SPEC) 7-1
+7.1.1 Code Objects 7-1
+7.1.2 attribute Objects 7-2
+7.1.3 Object-Type Objects 7-3
+7.1.4 Unit-Symbol Objects 7-3
+7.1.5 Representation-Code Objects 7-4
+7.1.6 eflr Objects 7-5
+7.1.7 IFLR Objects 7-6
+7.1.8 Specification Objects 7-6
+7.2 Dictionary Logical Record (DICT) 7-7
+7.2.1 Lexicon Objects 7-8
+7.2.2 IDENTIFIER Objects 7-8
+7.2.3 Option Objects 7-10
+7.2.4 BASE-DICTIONARY Objects 7-11
+Appendix A LOGICAL RECORD TYPES A-1
+A.1 Indirectly Formatted Logical Records A-1
+A.1 Explicitly Formatted Logical Records A-2
+Appendix B REPRESENTATION CODES B-1
+B.1 Code FSHORT: Low Precision Floating Point B-2
+B.2 Code FSINGL: IEEE Single Precision Floating Point B-3
+B.3 Code FSING1: Validated Single Precision Floating Point B-5
+B.4 Code FSING2: Two-Way Validated Single Precision Floating Point B-6
+B.5 Code ISINGL: IBM Single Precision Floating Point B-7
+B.6 Code VSINGL: VAX Single Precision Floating Point B-8
+B.7 Code FDOUBL: IEEE Double Precision Floating Point B-9
+B.8 Code FDOUB1: Validated Double Precision Floating Point B-11
+B.9 Code FDOUB2: Two-Way Validated Double Precision Floating Point B-12
+B.10 Code CSINGL: Single Precision Complex B-13
+B.11 Code CDOUBL: Double Precision Complex B-13
+B.12 Code SSHORT: Short Signed Integer B-14
+B.13 Code SNORM: Normal Signed Integer B-15
+B.14 Code SLONG: Long Signed Integer B-16
+B.15 Code USHORT: Short Unsigned Integer B-17
+B.16 Code UNORM: Normal Unsigned Integer B-18
+B.17 Code ULONG: Long Unsigned Integer B-19
+B.18 Code UVARI: Variable-Length Unsigned Integer B-20
+B.19 Code IDENT: Variable-Length Identifier B-22
+B.20 Code ASCII: Variable-Length ASCII Character String B-23
+B.21 Code DTIME: Date/Time B-24
+B.22 Code ORIGIN: Origin Reference B-26
+B.23 Code OBNAME: Object Name B-26
+B.24 Code OBJREF: Object Reference B-27
+B.25 Code ATTREF: Attribute Reference B-28
+B.26 Code STATUS: Boolean Status Value B-29
+B.27 Code UNITS: Units Expression B-29
+Appendix C PROPERTY INDICATORS C-1
+Appendix D CHANGEABLE ATTRIBUTES D-1
+Appendix E CHECKSUM ALGORITHM E-1
+Appendix F UNIT SYMBOLS F-1
+F.1 Base Units F-1
+F.2 Derived Units F-1
+GLOSSARY
+
+LIST OF FIGURES
+Figure 2-1 Logical Format 2-2
+Figure 2-2 Logical Record Segment Header 2-3
+Figure 2-3 Logical Record Segment Attributes 2-4
+Figure 2-4 Definition of Logical Record Segment Encryption Packet 2-5
+Figure 2-5 llustration of a Three-Segment Logical Record 2-6
+Figure 2-6 Partitions of a Physical Format 2-8
+Figure 2-7 Format of Storage Unit Label 2-8
+Figure 2-8 Illustration of Magnetic Tape Physical Format (1st Reel) 2-12
+Figure 3-1 Illustration of EFLR  Structure 3-2
+Figure 3-2 Definition of Component Role 3-4
+Figure 3-3 Definition of Characteristics and Component Format for Set, Redundant Set, and Replacement Set Components 3-4
+Figure 3-4 Definition of Characteristics and Component Format for Object Components 3-5
+Figure 3-5 Definition of Characteristics and Component Format for Attribute and Invariant Attribute Components 3-5
+Figure 3-6 Symbolic Representation of Components 3-7
+Figure 3-7 Symbolic Illustration of an EFLR 3-8
+Figure 3-8 Syntactic Illustration of an EFLR 3-9
+Figure 3-9 Structure of an Indirectly Formatted Logical Record 3-14
+Figure 4-1 Illustration of Spatial Coordinate System of a Well 4-3
+Figure 4-2 Sample Format for Defining Attributes of an Object 4-6
+Figure 4-3 Definition of the Long-Name Attribute 4-7
+Figure 4-4 Definition of the Description Attribute 4-8
+Figure 4-5 Definition of the Dimension Attribute 4-8
+Figure 4-6 Definition of the Axis Attribute 4-9
+Figure 5-1 Attributes of File-Header Object 5-1
+Figure 5-2 Byte Structure of File Header Logical Record 5-2
+Figure 5-3 Attributes of Origin Object 5-3
+Figure 5-4 Attributes of Well-Reference-Point Object 5-6
+Figure 5-5 Attributes of Axis Object 5-7
+Figure 5-6 Attributes of Long-Name Object 5-9
+Figure 5-7 Attributes of Channel Object 5-11
+Figure 5-8 Attributes of Frame Object 5-13
+Figure 5-9 Attributes of Path Object 5-15
+Figure 5-10 Illustration of Depth Offset and Measure Point Offset 5-17
+Figure 5-11 Attributes of Zone Object 5-18
+Figure 5-12 Attributes of Parameter Object 5-19
+Figure 5-13 Attributes of Equipment Object 5-20
+Figure 5-14 Attributes of Tool Object 5-23
+Figure 5-15 Attributes of Process Object 5-24
+Figure 5-16 Attributes of Computation Object 5-26
+Figure 5-17 Attributes of Calibration-Measurement Object 5-28
+Figure 5-18 Attributes of Calibration-Coefficient Object 5-30
+Figure 5-19 Attributes of Calibration Object 5-31
+Figure 5-20 Attributes of Group Object 5-32
+Figure 5-21 Attributes of Splice Object 5-33
+Figure 5-22 Attributes of No-Format Object 5-34
+Figure 6-1 Attributes of Message Object 6-1
+Figure 6-2 Attributes of Comment Object 6-2
+Figure 6-3 Attributes of Update Object 6-3
+Figure 7-1 Attributes of Code Object 7-1
+Figure 7-2 Attributes of Attribute Object 7-2
+Figure 7-3 Attributes of Object-Type Object 7-3
+Figure 7-4 Attributes of Unit-Symbol Object 7-4
+Figure 7-5 Attributes of Representation-Code Object 7-5
+Figure 7-6 Attributes of EFLR Object 7-5
+Figure 7-7 Attributes of IFLR Object 7-6
+Figure 7-8 Attributes of Specification Object 7-7
+Figure 7-9 Attributes of Lexicon Object 7-8
+Figure 7-10 Attributes of IDENTIFIER Object 7-9
+Figure 7-11 Attributes of Option Object 7-10
+Figure 7-12 Attributes of BASE-DICTIONARY Object 7-11
+Figure A-1 Numeric Codes for Public IFLR Types A-1
+Figure A-2 Numeric Codes for Public EFLR Types A-2
+Figure D-1 Changeable Attributes D-2
+   ------------------------------------------------- --></body></html>

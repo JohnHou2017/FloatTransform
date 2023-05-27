@@ -1,0 +1,81 @@
+<html><head><title>Preface</title>
+
+
+
+<script language="JavaScript">
+<!--
+
+function SymError()
+{
+  return true;
+}
+
+window.onerror = SymError;
+
+var SymRealWinOpen = window.open;
+
+function SymWinOpen(url, name, attributes)
+{
+  return (new Object());
+}
+
+window.open = SymWinOpen;
+
+//-->
+</script>
+
+<script language="javascript">
+<!--
+function getTopWin(s) {
+  var i,n=top.frames.length;
+  for (i=0;i<n;i++){
+    if (top.frames[i].name == s){
+       return top.frames[i];
+       break;
+    }
+  }
+  return null;
+}
+function loadframeset(){
+  var w=null,t='';
+  if (self==top || self==parent) w=self;
+  else if (self.name=='RP66V1_DOC') w=parent;
+  else if (self.name=='EPIC2_2') w=self;
+  if (w){
+    var m=getTopWin('EPIC2_2-MAIN');
+    if (m) t=m._prefix[m._style];
+    w.location.href='main'+t+'.html?rp66v1_pref'+self.location.search;
+  }
+}
+//-->
+</script>
+<!-- base --></head><body onload="var SymTmpWinOpen = window.open; window.open = SymWinOpen; loadframeset(); window.open = SymTmpWinOpen;">
+<h3>RP66 V1<p>
+<a href="http://www.posc.org/technical/data_exchange/RP66/V1/rp66v1_pref.html">
+Preface
+</a>
+</p></h3>
+
+<b>Contents:</b><p><small>
+
+<a href="http://www.posc.org/technical/data_exchange/RP66/V1/rp66v1_pref.html#PREFACE" on="" mouseover="self.status='PREFACE';return true"><nobr>PREFACE</nobr></a><br>
+<a href="http://www.posc.org/technical/data_exchange/RP66/V1/rp66v1_pref.html#SPECIAL_NOTES" on="" mouseover="self.status='SPECIAL NOTES';return true"><nobr>SPECIAL NOTES</nobr></a><br>
+<a href="http://www.posc.org/technical/data_exchange/RP66/V1/rp66v1_pref.html#ORGANIZATION" on="" mouseover="self.status='ORGANIZATION';return true"><nobr>ORGANIZATION</nobr></a><br>
+<a href="http://www.posc.org/technical/data_exchange/RP66/V1/rp66v1_pref.html#NOTATION" on="" mouseover="self.status='NOTATION';return true"><nobr>NOTATION</nobr></a><br>
+<a href="http://www.posc.org/technical/data_exchange/RP66/V1/rp66v1_pref.html#TRADEMARKS" on="" mouseover="self.status='TRADEMARKS';return true"><nobr>TRADEMARKS</nobr></a><br>
+
+</small></p><p></p><hr>
+<!--
+POSC Specifications v2.2
+Copyright 1997 POSC. All rights reserved.
+-->
+<!-- Generated: Fri Dec 12 14:54:12 1997 -->
+<script language="JavaScript">
+<!--
+
+window.open = SymRealWinOpen;
+
+//-->
+</script>
+
+</body></html>

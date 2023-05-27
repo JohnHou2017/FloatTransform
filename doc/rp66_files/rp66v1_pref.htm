@@ -1,0 +1,188 @@
+<html><head><title>PREFACE</title></head>
+<body>
+<h3><a name="PREFACE">PREFACE</a></h3>
+<ul>
+ <li>
+This standard was prepared by the API Subcommittee on Recommended 
+Format for Digital Well Log Data.  The content is based on a concept 
+and proposal originally submitted to API by Schlumberger Well Services. 
+This publication was under jurisdiction of the American Petroleum 
+Institute Production Department's Executive Committee on 
+Drilling and Production Practices until June 1998, when
+Petrotechnical Open Software Corporation (POSC) accepted its 
+stewardship.
+ </li><li>
+This publication specifies a format for digital well log data, called 
+here the Digital Log Interchange Standard (DLIS).  This format may 
+be used for the recording of well log data on magnetic tape as well 
+as on other storage media.
+ </li><li>
+Anyone may use this standard who desires to do so, subject to the
+terms of the 
+<a href="http://www.posc.org/technical/data_exchange/RP66/V1/license.html">
+        POSC Software License Agreement</a>.
+<!-- -- API publications may be used by anyone desiring to do so.  Every 
+effort has been made by API to assure the accuracy and reliability 
+of data contained in this publication.  However, the Institute makes 
+no representation, warranty, or guarantee in connection with this publication 
+and hereby expressly disclaims any liability or responsibility for 
+loss or damage resulting from its use or applications hereunder or 
+for violation of any federal, state, or municipal regulation with which 
+this publication may conflict.
+ <!-- li
+Users of this standard are reminded that constantly developing 
+technology 
+and specialized operations may not permit complete coverage of all 
+operations or alternatives.  This standard is not intended to inhibit 
+developing technology, equipment improvements, or improved operational 
+precedures.  This standard does not obviate the need for qualified 
+engineering and operations analyses and sound judgment 
+regarding specific 
+applications.
+ -- -->
+ </li><li>
+Suggestions for revisions or additions are invited and should be 
+submitted to 
+ <a href="mailto:theriot@posc.org">POSC</a>.
+ </li><li>
+Requests for permission to reproduce any part
+of the material published herein shall be addressed to
+ <a href="mailto:theriot@posc.org">POSC</a>.
+</li></ul>
+<hr>
+ 
+<h3><a name="SPECIAL_NOTES">SPECIAL NOTES</a></h3>
+API RP66 V1 was originally published by the API in May 1991 
+with a clause indicating that it would not be considered 
+an operative API styandard 
+five years after its publication date, unless reaffirmed 
+or republished.  
+This document, POSC RP66 V1, is considered to be applicable 
+indefinitely, i. e., until withdrawn or deprecated by
+POSC, with no requirement for periodic reaffirmation or 
+extension. 
+
+<hr>
+ 
+<h3><a name="ORGANIZATION">ORGANIZATION</a></h3>
+<h4>Structure:  How Is This Document Organized?</h4>
+This document is divided into seven chapters, six appendices, and a 
+glossary.
+<dl>
+ <dt>Chapter 1:
+  </dt><dd>
+INTRODUCTION
+ </dd><dt>Chapter 2:
+  </dt><dd>
+DATA ORGANIZATION, a description of the physical and logical 
+hierarchies, their organizations and relationships
+ </dd><dt>Chapter 3:
+  </dt><dd>
+LOGICAL RECORD SYNTAX, a description of how logical records 
+are represented
+ </dd><dt>Chapter 4:
+  </dt><dd>
+SEMANTIC TERMINOLOGY AND RULES, a summary of important concepts 
+and general rules for defining elements of the standard
+ </dd><dt>Chapter 5:
+  </dt><dd>
+SEMANTICS: STATIC AND FRAME DATA, a description of Frames, 
+the Objects required to define them, and the Objects which establish 
+the parameters and environment for processing Frames
+ </dd><dt>Chapter 6:
+  </dt><dd>
+SEMANTICS: TRANSIENT DATA, a description of the Objects 
+that convey messages and signify changes during acquisition and 
+processing of Frames
+ </dd><dt>Chapter 7:
+  </dt><dd>
+SEMANTICS: DICTIONARIES, a description of the Objects that 
+specify the semantic structure of the standard and that specify 
+dictionary-controlled names used by the standard
+ </dd><dt>Appendix A:
+  </dt><dd>
+LOGICAL RECORD TYPES, a list of defined Types for Public 
+and Private Logical Records
+ </dd><dt>Appendix B:
+  </dt><dd>
+REPRESENTATION CODES, a list of Representation Codes
+ </dd><dt>Appendix C:
+  </dt><dd>
+PROPERTY INDICATORS, a list of indicators used to designate 
+the processing or corrections performed on data
+ </dd><dt>Appendix D:
+  </dt><dd>
+CHANGEABLE ATTRIBUTES, a list of those defined Attributes 
+that are permitted to be changed (i.e., updated) in a Logical File
+ </dd><dt>Appendix E:
+  </dt><dd>
+CHECKSUM ALGORITHM, a description of the algorithm used 
+to compute the Checksum in the Logical Record Segment Trailer.
+ </dd><dt>Appendix F:
+  </dt><dd>
+UNIT SYMBOLS, a list of symbols for base units and selected 
+derived units
+ </dd><dt>Glossary
+</dt></dl>
+
+<hr>
+
+<h3><a name="NOTATION">
+Notation: How Is This Document Written?</a></h3>
+Numerous cases of unusual capitalization appear in this document.  
+Capitalized terms have special, formal, technical connotations in a 
+DLIS context; these terms do not retain 
+their normal English connotations. 
+ When such a special term is first introduced, it is italicized.
+<p>
+Acronyms are fully defined before they are used.
+</p><p>
+Many figures include comment numbers that associate a particular item 
+with a comment that appears below the figure.  For example, 
+
+<table border="3">
+ <tbody><tr>
+  <td><b>Label
+  </b></td><td><b>Restrictions
+  </b></td><td><b>Comments
+ </b></td></tr><tr>
+  <td>DESCRIPTION
+  </td><td>C = 1, R = ASCII
+  </td><td>-
+ </td></tr><tr>
+  <td>OBJECT-TYPE
+  </td><td>C = 1, R = IDENT
+  </td><td><a href="#pref_1_1">1</a>
+ </td></tr><tr>
+  <td>OBJECT-LIST
+  </td><td>R = (OBNAME, OBJREF)
+  </td><td><a href="#pref_1_2">2</a>
+ </td></tr><tr>
+  <td>GROUP-LIST
+  </td><td>R = OBNAME
+  </td><td><a href="#pref_1_3">3</a>
+</td></tr></tbody></table>
+ 
+Figure 5-25.  Attributes of Group Object
+</p><p>
+Comments:
+</p><pre><dl>
+ <dd><a name="pref_1_1">1.</a> The OBJECT-TYPE Attribute specifies ...
+ </dd><dd><a name="pref_1_2">2.</a> The OBJECT-LIST Attribute is a List of references to ...
+ </dd><dd><a name="pref_1_3">3.</a> The GROUP-LIST Attribute is a List of references to ...
+</dd></dl>
+</pre>
+
+<hr>
+
+<h3><a name="TRADEMARKS">Trademarks</a></h3>
+<dl>
+ <dt>The following is a mark of Schlumberger:
+  </dt><dd>Schlumberger
+ </dd><dt>The following is a mark of Digital Equipment Corporation:
+  </dt><dd>VAX
+ </dd><dt>The following is a mark of AT&amp;T:
+  </dt><dd>UNIX
+ </dd><dt>The following is a mark of IBM:
+  </dt><dd>IBM
+</dd></dl></body></html>

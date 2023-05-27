@@ -1,0 +1,266 @@
+<!--------------------------------------------------------------------------->  
+<!--                           INTRODUCTION                                
+
+ The Code Project article submission template (HTML version)
+
+Using this template will help us post your article sooner. To use, just 
+follow the 3 easy steps below:
+ 
+     1. Fill in the article description details
+     2. Add links to your images and downloads
+     3. Include the main article text
+
+That's all there is to it! All formatting will be done by our submission
+scripts and style sheets. 
+
+-->  
+<!--------------------------------------------------------------------------->  
+<!--                        IGNORE THIS SECTION                            -->
+<html>
+<head>
+<title>The Code Project</title>
+<Style>
+BODY, P, TD { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt }
+H2,H3,H4,H5 { color: #ff9900; font-weight: bold; }
+H2 { font-size: 13pt; }
+H3 { font-size: 12pt; }
+H4 { font-size: 10pt; color: black; }
+PRE { BACKGROUND-COLOR: #FBEDBB; FONT-FAMILY: "Courier New", Courier, mono; WHITE-SPACE: pre; }
+CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
+</style>
+<link rel="stylesheet" type=text/css href="http://www.codeproject.com/styles/global.css">
+</head>
+<body bgcolor="#FFFF00" color=#000000>
+<!--------------------------------------------------------------------------->  
+
+
+<!-------------------------------     STEP 1      --------------------------->
+<!--  Fill in the details (CodeProject will reformat this section for you) -->
+
+<pre>
+Title:       Transform between IEEE, IBM or VAX floating point number and its bytes expression
+Author:      John Jiyang Hou 
+Email:       jyhou69@hotmail.com
+Environment: C, MinGW, Windows-XP
+Level:       Advanced
+Section      Miscellaneous
+SubSection   Free tool
+</pre>
+
+<!-------------------------------     STEP 2      --------------------------->
+<!--  Include download and sample image information.                       --> 
+
+<ul class=download>
+<li><a href="wod_src.zip">Download source - XXX Kb</a></li> 
+</ul>
+
+
+<!-------------------------------     STEP 3      --------------------------->
+<!--  Add the article text. Please use simple formatting (<h2>, <p> etc)   --> 
+
+<h2>Introduction</h2>
+
+<p>This program can transform a floating point number to its bytes expression or 
+transform a bytes expression to a floating point number.&nbsp;
+
+<h2>Background</h2>
+<p style="word-spacing: 0; line-height: 100%">I ever tried to develop a program   
+to read a DLIS ( Digital Log Interchange Standard ) format data file. I found   
+the sample log data was recorded as VAX single float format. so I&nbsp; had to   
+read 4 bytes stream from the binary file, then recovered the real number. I succeed   
+to recover all frames data for all channels. I compared my result with the   
+output of Schlumberger free tool program Toolbox. they are identical. I also did   
+some test by a free Java package Cynosurex, it gave the same result. This   
+remembered me some halfway jobs about the floating point number and bytes order   
+analyze five years ago and inspired my enthusiasm to proceed again.<h2>Bits   
+expression of floating point number</h2>
+
+<p>IEEE single precision floating point:
+<pre>SEF :       S        EEEEEEEE        FFFFFFF        FFFFFFFF        FFFFFFFF
+bits :      1        2      9        10                                    32
+bytes :     byte1           byte2                   byte3           byte4</pre>
+<p>IEEE double precision floating point:</p>
+<font SIZE="2">
+<pre>SEF :      S        EEEEEEE    EEEE    FFFF    FFFFFFFF    FFFFFFFF    FFFFFFFF    FFFFFFFF    FFFFFFFF    FFFFFFFF
+bits :     1        2             12   13                                                                         64
+bytes :    byte1               byte2           byte3       byte4       byte5       byte6       byte7       byte8
+fraction :                             L1                              L2</pre>
+<p>IBM single precision floating point:</p>
+<pre>SEF :       S        EEEEEEE        FFFFFFFF        FFFFFFFF        FFFFFFFF
+bits :      1        2     8        9                                      32
+bytes :     byte1                   byte2           byte3           byte4</pre>
+</font>
+<p>IBM double precision floating point:</p>
+<font SIZE="2">
+<pre>SEF :      S        EEEEEEE        FFFFFFFF    FFFFFFFF    FFFFFFFF    FFFFFFFF    FFFFFFFF    FFFFFFFF    FFFFFFFF
+bits :     1        2     8        9                                                                              64
+bytes :    byte1                   byte2       byte3       byte4       byte5       byte6       byte7       byte8
+fraction :                         L1                                  L2</pre>
+
+<p>VAX single precision floating point:
+<pre>SEF :       S        EEEEEEEE        FFFFFFF        FFFFFFFF        FFFFFFFF
+bits :      1        2      9        10                                    32
+bytes :     byte2           byte1                   byte4           byte3</pre>
+</font><h2>General encoding formula of the floating point</h2>
+<pre>V = (-1)<sup>S</sup> * M * A<sup>( E - B )</sup>
+M = C + F</pre>
+<p>V is the value, S is the sign, M is called mantissa, A is base, E is 
+exponent. B is exponent bias. C is mantissa constant, F is fraction. The A, B 
+and C are constant that could be different with the floating point architecture. 
+Here are some of them:<pre>IEEE single float :     A = 2   B = 127   C = 1
+IEEE double float :     A = 2   B = 1023  C = 1
+IBM  single float :     A = 16  B = 64    C = 0
+IBM  double float :     A = 16  B = 64    C = 0
+VAX  single float :     A = 2   B = 128   C = 0.5</pre>
+<h2>Maximum value of the fraction</h2>
+<p>As mentioned above, F is the fraction, the minimum value of the IEEE and VAX fraction 
+F is 0, IBM fraction minimum value is 1/16, F is zero means all fraction bits ( F of bits expression above ) are 0. The  
+maximum value the fraction will be reached when all fraction bits are 1. To  
+figure out it, we have to use a little high school mathematics, can you remember  
+this formula?<pre>1/2 + 1/4 + 1/8 + ... + 1/2<sup>n</sup> = 1 - 1/2<sup>(n-1)</sup></pre> 
+<p>The only easy ignored detail here is about VAX single precision floating 
+point. Except its wired bytes order, its fraction bits segment starts from 1/4, 
+not from 1/2 as IEEE or IBM. This is another example for that complexity is 
+always from personality.<pre>G is the maximum value of the fraction F
+
+IEEE single float :     G = 1 - 1/2<sup>22</sup>
+IEEE double float :     G = 1 - 1/2<sup>51</sup>
+IBM  single float :     G = 1 - 1/2<sup>23</sup>
+IBM  double float :     G = 1 - 1/2<sup>55</sup>
+VAX  single float :     G = 1 - 1/2<sup>23</sup> - 1/2</pre>
+<h2>Mantissa range</h2>
+<p>It is easy to figure out the mantissa range based on above values of C and G. 
+The IBM float mantissa minimum value will be explained below.</p>
+<pre>IEEE single float :     1 &lt;= M &lt;= 2 - 1/2<sup>22</sup>
+IEEE double float :     1 &lt;= M &lt;= 2 - 1/2<sup>51</sup>
+IBM  single float :     1/16 &lt;= M &lt;= 1 - 1/2<sup>23</sup>
+IBM  double float :     1/16 &lt;= M &lt;= 1 - 1/2<sup>55</sup>
+VAX  single float :     1/2 &lt;= M &lt;= 1 - 1/2<sup>23</sup></pre>
+<h2>Bytes order</h2> 
+<p>I use a simple union data structure and a two bytes unsigned short integer 
+258 to test what kind of bytes order for your memory to store the number. For 
+LittleEndian architecture, such as: Intel, this function will return 2; For 
+BigEndian architecture, such as: SPARC, this function will return 1.<h2>Transform 
+bytes to floating point</h2>
+<p>There are two steps for the transform. The first step is to transform bytes 
+to SEF, which means Sign, Exponent and Fraction. The second step is to transform 
+SEF to floating point number.<h3>1. Bytes to SEF:&nbsp;</h3>  
+<p>Firstly, it is to adjust incoming bytes order to fit the above bits   
+expression of floating point, then the SEF values can be gotten through some   
+bits operation based on the above bits expression. For double precision floating   
+point, I decompose the fraction into two parts unsigned long integers, which are   
+L1 and L2.<h3>2. SEF to floating point:</h3>  
+<p>It is easy to recover the floating point number from SEF based on the above 
+general encoding formula and A, B and C three constants.<h2>Transform floating point to bytes</h2> 
+<p>Similar with above method, there are also two steps for the transform. The first step is to transform 
+floating point to SEF. The second step is to transform  
+SEF to bytes.</p>
+<h3>1. Floating point to SEF:</h3>
+<p>This part is the most important in all programs. I developed two methods to  
+calculate the E and F from the floating point number.&nbsp;<p>The first method  
+is more natural. Its principle is same as transforming a integer to its binary  
+expression, which gets every bit through continually dividing the base 2. In our  
+case, we can continually divide or multiple the base till the quotient settles  
+within the mantissa range mentioned above. The choose of divide or multiple  
+depends on the value E-B is positive or negative, but it is impossible to know  
+the sign of the value E-B before E is known. Actually we can determine it  
+through comparing the floating point number with the mantissa bound value. The  
+loop times is used to determine the E value, meantime, the surplus value of the  
+original floating point after the loop is used to determine the F value.<p>The  
+second method is a little complex. It uses reverse algorithm to figure out the E 
+value by logarithm, then it is easy to get the F value by the above encoding 
+formula. Actually we can conclude the following formula for the E and F:<pre>V is the floating point number
+D = log2 , base is e
+
+IEEE single float :     E = (int) ( logV / D + B )
+IEEE double float :     E = (int) ( logV / D + B )
+IBM  single float :     E = (int) ( ( logV / D ) / 4 + 1 + B )
+IBM  double float :     E = (int) ( ( logV / D ) / 4 + 1 + B )
+VAX  single float :     E = (int) ( ( logV / D ) + 1 + B )
+
+F = V / A<sup>(E-B)</sup> - C</pre>
+<p>I give a brief proof for these formula. The zero value and the sign S can be 
+harmlessly ignored, so the float value is assumed as positive: V &gt; 0.</p>
+<p>1. IEEE float:&nbsp;<br> 
+The mantissa range of the IEEE float is: 1 &lt;= M &lt; 2 . so: 0 &lt;= logM /  
+log2 &lt; 1, notice: E is a non-negative integer. so:</p> 
+<pre>      (int) ( logV / log2 + B ) 
+    = (int) ( logM / log2 + ( E-B ) + B ) 
+    = (int) ( logM / log2 + E ) 
+    = E</pre>
+<p>2. IBM float:<br>
+The key point here is mentioned in the RP66 reference document: <i>Bits 1 - 4 of byte 2 may not all be zero except for true zero. In other words, the first hexadecimal digit of the mantissa must be non-zero, except for true zero. 
+</i>This means the IBM float mantissa minimum value is 1/16. so: 0 &lt; logM / 
+log16 + 1 &lt; 1, notice: E is a non-negative integer.</p>
+<pre>      (int) ( ( logV / log2 ) / 4 + 1 + B ) 
+    = (int) ( logM / log16 + ( E-B ) + 1 + B ) 
+    = (int) ( logM / log16 + 1 + E ) 
+    = E</pre>
+<p>3. VAX float:<br>
+The VAX float mantissa minimum value is 1/2, so: 0 &lt; logM / log2 + 1 &lt; 1, 
+notice: E is a non-negative integer.</p>
+<pre>      (int) ( logV / log2 + 1 + B ) 
+    = (int) ( logM / log2 + ( E-B ) + 1 + B ) 
+    = (int) ( logM / log2 + 1 + E ) 
+    = E</pre>
+
+<h3>2. SEF to bytes:</h3>
+
+<p>There are no difficult things for this part. It just needs bytes order adjust  
+and some bits operation.</p> 
+
+<p>The programs also include a regular Union method to transform IEEE float and 
+its bytes expression.</p>
+
+<h2>Compile</h2>
+<p>This program was compiled in <a href="http://www.mingw.org/download.shtml">MinGW</a>     
+environment in Windows-XP. You have to set PATH environment variable or run <b>setp.bat</b>     
+before&nbsp;compiling.   
+<pre>set PATH = %PATH%; C:\MinGW\bin ;</pre>
+
+<p>then run <b>clib.bat</b>  to create the library or manually compile the program as followed: 
+
+<pre>del libNumber.lib
+del *.o
+g++ -c ByteOrder.c
+g++ -c Float2SEF.c
+g++ -c SEF2Byte.c
+g++ -c Byte2SEF.c
+g++ -c SEF2Float.c
+g++ -c IeeeFloat.c
+g++ -c IbmFloat.c
+g++ -c VaxFloat.c
+g++ -c TestlibNumber.c
+ar m libNumber.lib
+ar r libNumber.lib *.o
+ar t libNumber.lib
+del *.o</pre>
+
+<p>run cpsam.bat to compile the two test program as followed:</p>
+
+<pre>cpsam test1
+cpsam test2</pre>
+
+<p>After all, You can run the the test1.exe program in a DOS window. You also can redirect the  
+output to a text file as followed:</p> 
+
+<pre>test1 &gt; test.txt</pre>
+
+<p>test2.exe is another test program to test any float number for this library.</p>
+
+<h2>Reference</h2>
+
+<p>I have wrapped all reference web pages into my source code zip package.&nbsp; <p><a href="http://http://www.psc.edu/general/software/packages/ieee/ieee.html">http://www.posc.org/technical/data_exchange/RP66/V1/Toc/main.html</a>.<br>
+<a href="http://www.psc.edu/general/software/packages/ieee/ieee.html">http://www.psc.edu/general/software/packages/ieee/ieee.html</a>.<br>
+<a href="http://www.quadibloc.com/comp/cp0201.htm">http://www.quadibloc.com/comp/cp0201.htm</a>.<br>
+<a href="http://stevehollasch.com/cgindex/coding/ieeefloat.html">http://stevehollasch.com/cgindex/coding/ieeefloat.html</a>.<br>
+<a href="http://en.wikipedia.org/wiki/Vax">http://en.wikipedia.org/wiki/Vax</a>.<br>
+<a href="http://en.wikipedia.org/wiki/IBM_Floating_Point_Architecture">http://en.wikipedia.org/wiki/IBM_Floating_Point_Architecture</a>.<br>
+<a href="http://en.wikipedia.org/wiki/IEEE_floating-point_standard">http://en.wikipedia.org/wiki/IEEE_floating-point_standard</a>.<br>
+<a href="http://en.wikipedia.org/wiki/Binary_numeral_system">http://en.wikipedia.org/wiki/Binary_numeral_system</a>.<br>
+<a href="http://wiki.tcl.tk/756">http://wiki.tcl.tk/756</a>.<br>
+<a href="http://cynosurex.granax.com//documents/CI_class/api/cynosurex/legacy/VAX_Float.html#F_float_to_float(byte[])">http://cynosurex.granax.com//documents/CI_class/api/cynosurex/legacy/VAX_Float.html#F_float_to_float(byte[])</a>.<br>
+ <p><a href="http://http://www.psc.edu/general/software/packages/ieee/ieee.html"><br>
+ </a>
+</body>
+</html>
